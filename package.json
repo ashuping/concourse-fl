@@ -6,8 +6,8 @@
 		"name": "Alex Isabelle Shuping",
 		"email": "alex.i.shuping@gmail.com",
 		"url": "https://shuping.ai"
-	  },
-	  "license": "Apache-2.0",
+	},
+	"license": "Apache-2.0",
 	"workspaces": [
 		"concourse-client",
 		"concourse-server"
