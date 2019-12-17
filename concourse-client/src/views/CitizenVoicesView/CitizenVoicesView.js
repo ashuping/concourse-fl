@@ -15,7 +15,6 @@
  */
 
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 
 import bg from '../../assets/starry-sky-bg.svg'
 
@@ -44,13 +43,18 @@ function CitizenVoicesView({fetch, set_title}){
 		set_title("Citizen Voices")
 	}, [set_title])
 
+	let count = -1
 	const voices_parsed = load_done
 		? (voices
-			? voices.map((voice) => <CitizenVoice 
-				name={voice.name}
-				occupation={voice.occupation}
-				quote={voice.quote}
-			/>)
+			? voices.map((voice) => {
+				count += 1
+				return <CitizenVoice 
+					key={count}
+					name={voice.name}
+					occupation={voice.occupation}
+					quote={voice.quote}
+				/>
+			})
 			: <p>No Citizen Voices yet, check back later!</p>
 		)
 		: <p>Loading, Please Wait...</p>
@@ -60,7 +64,6 @@ function CitizenVoicesView({fetch, set_title}){
 			<img src={bg} alt="background" />
 		</div>
 		<div className="page-body">
-			<Link path to="/" className="subtle">Return to Homepage</Link>
 			<h1>Citizen Voices!</h1>
 			<h2>Here are some things that real citizens have to say about Concourse!</h2>
 		</div>

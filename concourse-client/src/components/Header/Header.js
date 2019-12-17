@@ -7,9 +7,9 @@ import { Home, User } from 'react-feather'
 function Header({title}){
 	return <div className="header">
 		<table><tbody><tr>
-			<td><Link path to="/"><Home /></Link></td>
+			<td><Link to="/"><Home /></Link></td>
 			<th>{title}</th>
-			<td><Link path to="/login"><User /></Link></td>
+			<td><Link to="/login"><User /></Link></td>
 		</tr></tbody></table>
 	</div>
 }

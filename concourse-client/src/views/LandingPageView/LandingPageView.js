@@ -35,7 +35,7 @@ function LandingPageView({set_title}){
 			<img src={logo} className="concourse-title-logo" alt="Concourse, Florida: Gateway to the Sunshine State" />
 		</div>
 		<div className="top-blurb">
-			<p>Concourse is a small city in southern Florida, on the wooded shores of <Link path to="/lake-yeehaw">Lake Yeehaw</Link>. Home to over 28,000 happy <Link path to="/citizen-voices">citizens</Link>, Concourse is </p>
+			<p>Concourse is a small city in southern Florida, on the wooded shores of <Link to="/lake-yeehaw">Lake Yeehaw</Link>. Home to over 28,000 happy <Link to="/citizen-voices">citizens</Link>, Concourse is </p>
 		</div>
 	</main>
 }
