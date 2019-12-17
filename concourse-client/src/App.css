@@ -24,6 +24,8 @@
 	--prime-violet: #8E6C88;
 	--dark-violet: #342832;
 
+	--link-text: var(--prime-blue);
+
 	/* dark magic css trickery
 	 * courtesy of stackoverflow
 	 * https://stackoverflow.com/questions/40010597/how-do-i-apply-opacity-to-a-css-color-variable
