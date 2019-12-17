@@ -4,9 +4,14 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+import app from '../app.js'
+import debugLib from 'debug'
+import http from 'http'
+const debug = debugLib('concourse-server:server')
+
+/*var app = require('../app');
 var debug = require('debug')('concourse-server:server');
-var http = require('http');
+var http = require('http');*/
 
 /**
  * Get port from environment and store in Express.
