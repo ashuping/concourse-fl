@@ -27,7 +27,7 @@
 	--light-violet: #915F88;
 	--dark-violet: #342832;
 
-	--default-bg: var(--bg-dark);
+	--default-bg: var(--dark-violet);
 	--default-text: var(--fg-light);
 	--link-text: var(--prime-blue);
 	--link-hover: var(--light-violet);

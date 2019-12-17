@@ -19,6 +19,8 @@ import { Link } from 'react-router-dom'
 
 import { GetAllVoices } from '../../util/Voices'
 
+import bg from '../../assets/starry-sky-bg.svg'
+
 import './CitizenVoicesView.css'
 
 function CitizenVoice({name, occupation, quote}){
@@ -52,6 +54,9 @@ function CitizenVoicesView(){
 		: <p>Loading, Please Wait...</p>
 
 	return <div className="citizen-voice-view">
+		<div className="bg-img">
+			<img src={bg} alt="background image" />
+		</div>
 		<div className="page-body">
 			<Link path to="/" className="subtle">Return to Homepage</Link>
 			<h1>Citizen Voices!</h1>

@@ -14,6 +14,18 @@
 	limitations under the License.
  */
 
+ .bg-img{
+    z-index: -100;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.bg-img img{
+    width: 100%;
+}
+
 div.citizen-voice-container{
     padding: 1em 0;
 }
