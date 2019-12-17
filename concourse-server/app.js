@@ -14,6 +14,7 @@
 	limitations under the License.
  */
 
+ import cors from 'cors'
  import createError from 'http-errors'
  import express from 'express'
  import cookieParser from 'cookie-parser'
@@ -34,6 +35,7 @@ mongoose.connect(process.env.DB_URI || config.db.uri, {
 // view engine setup
 
 app.use(logger('dev'));
+app.use(cors({credentials: true, origin: ['http://localhost:3000', 'http://localhost:5000']}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

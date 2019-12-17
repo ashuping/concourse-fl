@@ -1,4 +1,4 @@
-/* City of Concourse Website - Main Application
+/* City of Concourse Website - Backend connection utilities
 	Copyright 2019 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,27 +13,11 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import './App.css'
-
-import LandingPageView from './views/LandingPageView/LandingPageView'
-import CitizenVoicesView from './views/CitizenVoicesView/CitizenVoicesView'
-
-function App() {
-	return (
-		<Router>
-			<Switch>
-				<Route exact path="/">
-					<LandingPageView />
-				</Route>
-				<Route path="/citizen-voices">
-					<CitizenVoicesView />
-				</Route>
-			</Switch>
-		</Router>
-	);
+function Backend(){
+    return process.env.NODE_ENV === "production" 
+        ? window.location.origin
+        : "http://localhost:5000"
 }
 
-export default App;
+export { Backend }
