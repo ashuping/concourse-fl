@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 import l0 from '../../assets/starry-sky-bg.svg'
@@ -21,7 +21,11 @@ import logo from '../../assets/concourse-logo.svg'
 
 import './LandingPageView.css'
 
-function LandingPageView(){
+function LandingPageView({set_title}){
+	useEffect(() => {
+		set_title("City of Concourse")
+	}, [set_title])
+
 	return <main className="main">
 		<div className="bg-parallax">
 			<img src={l0} className="layer-0" alt="background layer 0" />
