@@ -16,11 +16,6 @@
 .main{
     width: 100%;
     height: 100%;
-    color: var(--fg-light);
-}
-
-.main a{
-    color: var(--link-text);
 }
 
 .title-box{

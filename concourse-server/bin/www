@@ -4,15 +4,19 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('concourse-server:server');
-var http = require('http');
+import app from '../app.js'
+import debugLib from 'debug'
+import http from 'http'
+
+import config from '../config/config.js'
+
+const debug = debugLib('concourse-server:server')
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '5000');
+var port = normalizePort(process.env.PORT || config.port);
 app.set('port', port);
 
 /**
@@ -86,5 +90,6 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  debug('Concourse backend server listening on ' + bind);
+  console.log('Concourse backend server listening on ' + bind);
 }

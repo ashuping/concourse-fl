@@ -16,8 +16,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import l0 from './parallax-bg/main-bg-lowest.svg'
-import logo from './concourse-logo.svg'
+import l0 from '../../assets/starry-sky-bg.svg'
+import logo from '../../assets/concourse-logo.svg'
 
 import './LandingPageView.css'
 

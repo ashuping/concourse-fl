@@ -16,7 +16,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   sodipodi:docname="main-bg-lowest.svg">
+   sodipodi:docname="starry-sky-bg.svg">
   <defs
      id="defs2">
     <linearGradient
@@ -39,7 +39,8 @@
        y1="0.43266645"
        x2="97.018837"
        y2="190.99583"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.01,0,0,1.01,-0.5,-2.469991)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -50,9 +51,9 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="343.81364"
-     inkscape:cy="1041.5871"
+     inkscape:cy="1098.73"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="1600"
      inkscape:window-height="873"
@@ -67,22 +68,21 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="bgbgbg"
-     sodipodi:insensitive="true">
+     inkscape:label="bgbgbg">
     <rect
-       style="opacity:1;fill:url(#linearGradient4528);fill-opacity:1;stroke:#000000;stroke-width:0.29191437;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:url(#linearGradient4528);fill-opacity:1;stroke:#000000;stroke-width:0.29483351;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4518"
-       width="209.70808"
-       height="296.7081"
-       x="0.14595719"
-       y="0.145944" />
+       width="211.80516"
+       height="299.67517"
+       x="-0.35258323"
+       y="-2.3225877" />
   </g>
   <g
      inkscape:label="Layer 1"

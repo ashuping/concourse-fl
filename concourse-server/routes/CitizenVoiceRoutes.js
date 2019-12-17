@@ -1,4 +1,4 @@
-/* City of Concourse Website - Main Application
+/* City of Concourse Website - Citzen Voices Routes
 	Copyright 2019 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,27 +13,16 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import './App.css'
+import express from 'express'
+const Router = express.Router()
 
-import LandingPageView from './views/LandingPageView/LandingPageView'
-import CitizenVoicesView from './views/CitizenVoicesView/CitizenVoicesView'
+import { CreateCitizenVoice, RetrieveCitizenVoice, RetrieveAllVoices, EditCitizenVoice, DeleteCitizenVoice } from '../controllers/CitizenVoiceController.js'
 
-function App() {
-	return (
-		<Router>
-			<Switch>
-				<Route exact path="/">
-					<LandingPageView />
-				</Route>
-				<Route path="/citizen-voices">
-					<CitizenVoicesView />
-				</Route>
-			</Switch>
-		</Router>
-	);
-}
+Router.get('/', RetrieveAllVoices)
+Router.get('/:id', RetrieveCitizenVoice)
+Router.post('/create', CreateCitizenVoice)
+Router.post('/:id', EditCitizenVoice)
+Router.delete('/:id', DeleteCitizenVoice)
 
-export default App;
+export default Router

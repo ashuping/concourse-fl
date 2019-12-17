@@ -1,4 +1,4 @@
-/* City of Concourse Website - Main Application
+/* City of Concourse Website - Citizen Voices Schema
 	Copyright 2019 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,27 +13,23 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import './App.css'
+import mongoose from 'mongoose'
+const Schema = mongoose.Schema
 
-import LandingPageView from './views/LandingPageView/LandingPageView'
-import CitizenVoicesView from './views/CitizenVoicesView/CitizenVoicesView'
+const citizenVoiceSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    occupation: {
+        type: String,
+        required: true
+    },
+    quote: {
+        type: String,
+        required: true
+    }
+})
 
-function App() {
-	return (
-		<Router>
-			<Switch>
-				<Route exact path="/">
-					<LandingPageView />
-				</Route>
-				<Route path="/citizen-voices">
-					<CitizenVoicesView />
-				</Route>
-			</Switch>
-		</Router>
-	);
-}
-
-export default App;
+export const CitizenVoiceModel = mongoose.model('CitizenVoice', citizenVoiceSchema)
