@@ -1,4 +1,4 @@
-/* City of Concourse Website - Landing Page View CSS
+/* City of Concourse Website - Citizen Voices page
 	Copyright 2019 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,39 +13,12 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-.main{
-    width: 100%;
-    height: 100%;
-    color: var(--fg-light);
+
+import React from 'react'
+import { Link } from 'react-router-dom'
+
+function CitizenVoicesView(){
+	return <div><h1>Citizen Voices!</h1></div>
 }
 
-.main a{
-    color: var(--link-text);
-}
-
-.title-box{
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    background-color: rgba(var(--dark-violet-rgba), 0.7);
-}
-
-.title-box h1{
-    padding: 1em;
-}
-
-.title-box img{
-    width: 100%;
-}
-
-.bg-parallax{
-    z-index: -100;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-
-.bg-parallax img{
-    width: 100%;
-}
+export default CitizenVoicesView
