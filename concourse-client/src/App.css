@@ -40,6 +40,7 @@
 }
 
 body{
+	padding-top: 2.5em;
 	background-color: var(--default-bg);
 	color: var(--default-text)
 }
@@ -53,6 +54,35 @@ a{
 a:hover{
 	color: var(--link-hover);
 	text-decoration: none;
+}
+
+.header{
+	padding: 0.5em 0;
+	height: 2em;
+	background-color: var(--very-dark);
+	position: fixed;
+	top: 0;
+	width: 100%;
+}
+
+.header table{
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.header svg{
+	display: block;
+	margin: auto;
+}
+
+.header td{
+	width: 0;
+	text-align: center;
+	padding: 0 1em;
+}
+
+.header td a{
+	padding: 0;
 }
 
 .page-body{

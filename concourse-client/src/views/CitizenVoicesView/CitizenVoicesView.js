@@ -15,9 +15,6 @@
  */
 
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-
-import { GetAllVoices } from '../../util/Voices'
 
 import bg from '../../assets/starry-sky-bg.svg'
 
@@ -31,34 +28,42 @@ function CitizenVoice({name, occupation, quote}){
 	</div>
 }
 
-function CitizenVoicesView(){
+function CitizenVoicesView({fetch, set_title}){
 	const [voices, set_voices] = useState(null)
 	const [load_done, set_load_done] = useState(false)
 
 	useEffect(() => {
-		GetAllVoices().then((voices) => {
+		fetch("all_voices", null).then((voices) => {
 			set_voices(voices)
 			set_load_done(true)
 		})
-	}, [])
+	}, [fetch])
 
+	useEffect(() => {
+		set_title("Citizen Voices")
+	}, [set_title])
+
+	let count = -1
 	const voices_parsed = load_done
 		? (voices
-			? voices.map((voice) => <CitizenVoice 
-				name={voice.name}
-				occupation={voice.occupation}
-				quote={voice.quote}
-			/>)
+			? voices.map((voice) => {
+				count += 1
+				return <CitizenVoice 
+					key={count}
+					name={voice.name}
+					occupation={voice.occupation}
+					quote={voice.quote}
+				/>
+			})
 			: <p>No Citizen Voices yet, check back later!</p>
 		)
 		: <p>Loading, Please Wait...</p>
 
 	return <div className="citizen-voice-view">
 		<div className="bg-img">
-			<img src={bg} alt="background image" />
+			<img src={bg} alt="background" />
 		</div>
 		<div className="page-body">
-			<Link path to="/" className="subtle">Return to Homepage</Link>
 			<h1>Citizen Voices!</h1>
 			<h2>Here are some things that real citizens have to say about Concourse!</h2>
 		</div>
