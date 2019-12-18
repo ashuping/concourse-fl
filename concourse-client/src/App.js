@@ -28,7 +28,7 @@ async function fetch_value(type, id, cache, set_cache){
 	switch(type){
 		case "all_voices":
 			if(cache && cache.voice && cache.voice.all){
-				return Object.values(cache.voice)
+				return Object.values(cache.voice).filter((val) => val !== true)
 			}else{
 				const all_voices = await GetAllVoices()
 				cache.voice = all_voices
