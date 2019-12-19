@@ -17,6 +17,30 @@
 import { CitizenVoiceModel } from '../models/CitizenVoiceSchema.js'
 import mongodb from 'mongodb'
 
+/* Creates a new Citizen Voice entry
+ *
+ * Expects a JSON object as the body, in the form
+ * {
+ *    name: "name of the quote author",
+ *    occupation: "occupation of the quote author",
+ *    quote: "the quote to display"
+ * }
+ * 
+ * Returns 200 if the quote was successfully added, or 400 if the request was
+ * malformed in some way.
+ * 
+ * If the request was successful, also returns the same object sent with the
+ * request, but with an additional _id field that can be used as a unique
+ * identifier.
+ * 
+ * Response format:
+ * {
+ *    _id: "unique_hexadecimal_identifier"
+ *    name: "name of the quote author",
+ *    occupation: "occupation of the quote author",
+ *    quote: "the quote to display"
+ * }
+ */
 export const CreateCitizenVoice = (req, res, next) => {
 	if(!(
 		req.body.name
@@ -42,6 +66,16 @@ export const CreateCitizenVoice = (req, res, next) => {
 	})
 }
 
+/* Retrieves a single Citizen Voice entry
+ * 
+ * Expects the unique identifier for the requested object to be passed in as
+ * part of the URL.
+ * 
+ * Returns the same objects returned by CreateCitizenView, above.
+ * 
+ * Returns 200 if the request was successful, 404 if the identifier was not
+ * found, or 400 if the identifier is malformed in some way.
+ */
 export const RetrieveCitizenVoice = async (req, res, next) => {
 	const obj_id = req.params.id
 
@@ -61,6 +95,12 @@ export const RetrieveCitizenVoice = async (req, res, next) => {
 	}
 }
 
+/* Retrieves all CitizenVoice entries
+ * 
+ * If the database contains any CitizenVoice entries, this returns a JSON array
+ * containing all entries (with status code 200). If the database does not
+ * contain any entries, returns status code 404.
+ */
 export const RetrieveAllVoices = async (req, res, next) => {
 	const got = await CitizenVoiceModel.find()
 
@@ -71,6 +111,27 @@ export const RetrieveAllVoices = async (req, res, next) => {
 	}
 }
 
+/* Updates a CitizenVoice entry
+ * 
+ * Expects the unique identifier for the requested object to be passed in as
+ * part of the URL. The values to update should be provided as a JSON object in
+ * the body of the request.
+ * 
+ * Only fields which are modified need to be included in the request -
+ * fields which are not present in the request are assumed by the server to be
+ * unmodified.
+ * 
+ * The _id field CANNOT BE MODIFIED, and should not be included in the request.
+ * Requests containing an _id entry will be rejected with a 400 status code.
+ * 
+ * If the entry is found and successfully updated, a JSON object (in the same
+ * format returned by CreateCitizenVoice) representing the object's state after
+ * modification is returned, with status code 200.
+ * 
+ * If no entry is found, status code 404 is returned. If the unique identifier
+ * is malformed, if the body of the request contains unknown keys, or if the
+ * body contains the _id field, 400 is returned.
+ */
 export const EditCitizenVoice = async (req, res, next) => {
 	const obj_id = req.params.id
 
@@ -144,6 +205,18 @@ export const EditCitizenVoice = async (req, res, next) => {
 	}
 }
 
+/* Deletes a Citizen Voice entry from the database
+ *
+ * Expects the unique identifier for the requested object to be passed in as
+ * part of the URL.
+ * 
+ * If the object exists, it will be deleted, and a JSON object representing the
+ * object (before deletion) will be returned (in the same format as that
+ * returned by CreateCitizenVoice) with status code 200.
+ * 
+ * Returns 404 if the identifier was not found, or 400 if the identifier is
+ * malformed in some way.
+ */
 export const DeleteCitizenVoice = async (req, res, next) => {
 	const obj_id = req.params.id
 
