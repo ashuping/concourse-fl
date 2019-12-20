@@ -16,7 +16,8 @@
 		"client": "yarn workspace concourse-client start",
 		"server": "yarn workspace concourse-server start",
 		"start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn client\"",
-		"build": "yarn workspace concourse-client build && yarn workspace concourse-server build"
+		"build": "yarn workspace concourse-client build",
+		"test": "yarn workspace concourse-server test"
 	},
 	"dependencies": {
 		"concurrently": "^5.0.1",
