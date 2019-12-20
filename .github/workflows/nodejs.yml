@@ -6,6 +6,15 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
 
     strategy:
       matrix:
@@ -18,9 +27,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: yarn install, build, and test
+      env:
+        DB_URI: mongodb://root:password@localhost:27017/admin
+        DB_DB: concourse
+        CI: true
       run: |
         yarn install
         yarn run build --if-present
         yarn test
-      env:
-        CI: true
