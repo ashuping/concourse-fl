@@ -1,4 +1,4 @@
-name: Node CI
+name: Backend automated tests
 
 on: [push, pull_request]
 
@@ -32,6 +32,7 @@ jobs:
         DB_DB: concourse
         CI: true
       run: |
+        echo 'export default null' > ./concourse-server/config/config.js
         yarn install
         yarn run build --if-present
         yarn test

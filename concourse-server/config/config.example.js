@@ -26,6 +26,7 @@
 export default {
     port: 5000, // PORT
     db: {
-        uri: 'mongodb://user:password@example.biz/database' // DB_URI
+		uri: 'mongodb://user:password@example.biz:27017/database', // DB_URI
+		db: 'database' // DB_DB [optional - if not passed, it will default to the db specified in the connection string]
     }
 }
