@@ -33,6 +33,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: yarn install, build, and test
       env:
+        AUTH_SECRET: embarrasing photo of spongebob at the christmas party
+        AUTH_TKN_LIFETIME: 5m
         DB_URI: mongodb://root:password@localhost:27017/admin
         DB_DB: concourse
         CI: true
