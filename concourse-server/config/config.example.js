@@ -28,8 +28,10 @@ export default {
 	port: 5000, // PORT
 
 	ssl: {
-		// Path to the SSL certificate to use for the server. All connections are
-		// encrypted, so this MUST be provided.
+		// Set to true to disable SSL.
+		disabled: false, // SSL_DISABLED
+
+		// Path to the SSL certificate to use for the server. 
 		// 
 		// See https://certbot.eff.org/ for instructions on how to get a free SSL
 		// certificate from the Electronic Frontier Foundation's Let's Encrypt
