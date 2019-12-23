@@ -1,4 +1,4 @@
-name: Backend automated tests and code-coverage report
+name: Backend tests
 
 on: [push, pull_request]
 
