@@ -1,0 +1,45 @@
+name: Backend automated tests and code-coverage report
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
+
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: yarn install, build, and test
+      env:
+        AUTH_SECRET: embarrasing photo of spongebob at the christmas party
+        AUTH_TKN_LIFETIME: 5m
+        DB_URI: mongodb://root:password@localhost:27017/admin
+        DB_DB: concourse
+        CI: true
+      run: |
+        echo 'export default null' > ./concourse-server/config/config.js
+        yarn install
+        yarn backend-coverage
+        yarn backend-gh-coverage-report
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.lcov
+        flags: backend
