@@ -15,6 +15,7 @@
  */
 
 import jwt from 'jsonwebtoken'
+import mongodb from 'mongodb'
 import passport from 'passport'
 
 import { TokenBlacklistModel } from '../models/TokenBlacklistSchema.js'
@@ -178,25 +179,77 @@ export const Login = (req, res, next) => {
  * UID of the token to invalidate (this ID is provided as part of the response
  * to the login method), or "all" to invalidate every token created by the
  * logged-in user.
+ * 
+ * Administrators can additionally request to invalidate all of a different
+ * user's tokens - pass the user-id of the user to invalidate as the 
+ * 'invalidate_other_user' field. Pass 'all' instead of a user id to invalidate
+ * ALL current tokens.
+ * 
+ * If the requested ID cannot be parsed as an ObjectID (and is not 'all'), this
+ * will fail with 400.
+ * 
+ * If the requesting user is an administrator, this will either succeed (200)
+ * or return a 404 to indicate that the requested ID was not found.
+ * 
+ * If the requesting user is NOT an administrator, this will either succeed (200)
+ * or return 403 to indicate that either the requested ID was not found or that
+ * the ID is for a different user's session. The response will not indicate
+ * which is the case.
  */
 export const Logout = async (req, res, next) => {
 	if(!req.user){
 		return res.sendStatus(500)
 	}
 
-
 	let to_invalidate = []
 
 	if(req.body.id == 'all'){
-		to_invalidate = await TokenBlacklistModel.find({owning_user: req.user.user._id})
+		if(req.body.invalidate_other_user){
+			if(req.user.user.administrator){
+				if(req.body.invalidate_other_user == 'all'){
+					to_invalidate = await TokenBlacklistModel.find()
+				}else{
+					if(!mongodb.ObjectID.isValid(req.body.invalidate_other_user)){
+						return res.status(400).json({
+							reason: 'Malformed Object ID'
+						})
+					}
+					to_invalidate = await TokenBlacklistModel.find({owning_user: req.body.invalidate_other_user})
+				}
+			}else{
+				return res.status(403).json({
+					reason: 'Not authorized to invalidate sessions for other users'
+				})
+			}
+		}else{
+			to_invalidate = await TokenBlacklistModel.find({owning_user: req.user.user._id})
+		}
 	}else{
+		if(!mongodb.ObjectID.isValid(req.body.id)){
+			return res.status(400).json({
+				reason: 'Malformed Object ID'
+			})
+		}
+
 		const single_to_invalidate = await TokenBlacklistModel.findById(req.body.id)
 		to_invalidate = [single_to_invalidate]
 
-		if(!single_to_invalidate || !(
-			single_to_invalidate.owning_user.toString() === req.user.user._id.toString()
-			|| req.user.user.administrator
-		)){
+		if(!single_to_invalidate){
+			if(req.user.user.administrator){
+				return res.status(404).json({
+					reason: 'Session already expired or invalid'
+				})
+			}else{
+				return res.status(403).json({
+					reason: "Not authorized to invalidate this session"
+				})
+			}
+		}
+
+		if(
+			single_to_invalidate.owning_user.toString() !== req.user.user._id.toString()
+			&& !req.user.user.administrator
+		){
 			return res.status(403).json({
 				reason: "Not authorized to invalidate this session"
 			})
@@ -204,6 +257,7 @@ export const Logout = async (req, res, next) => {
 	}
 
 	if(to_invalidate){
+
 		for(let i = 0; i < to_invalidate.length; i++){
 			// have to await each blacklist, so we can't use vanilla forEach
 			to_invalidate[i].blacklisted = true
