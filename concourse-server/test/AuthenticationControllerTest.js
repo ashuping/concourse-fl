@@ -73,7 +73,7 @@ before(async function(){
 		campaigns: []
 	})
 
-	new_user_profile.save()
+	await new_user_profile.save()
 
 	// Probably overkill - the testing user should never show up in prod, and
 	// it should get deleted at the end of the tests anyway, but just in case,
@@ -89,7 +89,7 @@ before(async function(){
 		profile: new_user_profile._id
 	})
 
-	new_user_login.save()
+	await new_user_login.save()
 })
 
 after(async function(){
