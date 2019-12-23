@@ -15,10 +15,10 @@
  */
 
 import bcrypt from 'bcrypt'
-import { ObjectId } from 'mongodb'
 import mongoose from 'mongoose'
 
 const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
 
 const userLoginSchema = new Schema({
 	username: {

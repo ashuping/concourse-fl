@@ -18,8 +18,8 @@ import crypto from 'crypto'
 import fetch from 'node-fetch'
 import mongodb from 'mongodb'
 
-import { UserLoginModel } from '../models/UserLoginSchema'
-import { UserProfileModel } from '../models/UserProfileSchema'
+import { UserLoginModel } from '../models/UserLoginSchema.js'
+import { UserProfileModel } from '../models/UserProfileSchema.js'
 
 /* Checks a password against the HaveIBeenPwned breachlist. This is used to
  * to prevent users from using weak and/or breached passwords.
@@ -223,6 +223,7 @@ export const RegisterUser = async (req, res, next) => {
 			primary: true
 		}],
 		administrator: false,
+		can_create: false,
 		campaigns: campaigns
 	})
 

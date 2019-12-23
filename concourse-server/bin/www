@@ -6,7 +6,9 @@
 
 import app from '../app.js'
 import debugLib from 'debug'
+import fs from 'fs'
 import http from 'http'
+import https from 'https'
 
 import config from '../config/config.js'
 
@@ -20,10 +22,11 @@ var port = normalizePort(process.env.PORT || config.port);
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Create HTTPS server.
  */
-
-var server = http.createServer(app);
+var cert = fs.readFileSync(process.env.SSL_CERT || config.ssl.cert)
+var pkey = fs.readFileSync(process.env.SSL_PKEY || config.ssl.pkey)
+var server = https.createServer({cert: cert, key: pkey}, app);
 
 /**
  * Listen on provided port, on all network interfaces.
