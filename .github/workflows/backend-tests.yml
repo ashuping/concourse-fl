@@ -42,4 +42,4 @@ jobs:
         echo 'export default null' > ./concourse-server/config/config.js
         yarn install
         yarn backend-coverage
-        yarn backend-gh-report-coverage
+        yarn backend-gh-coverage-report
