@@ -471,9 +471,25 @@ describe('Authentication Controller', function(){
 
 			return request(app)
 				.delete('/api/v1/login')
-				.set('cookie', cookie)
+				.set('Cookie', cookie)
 				.send({
 					id: 'invalid'
+				})
+				.expect(400)
+				.expect({
+					reason: 'Malformed Object ID'
+				})
+		})
+
+		it('should fail with 400 if an administrator requests to delete all tokens for an invalid user', async function(){
+			const [cookie, payload, agent] = await do_login()
+
+			return request(app)
+				.delete('/api/v1/login')
+				.set('Cookie', cookie)
+				.send({
+					id: 'all',
+					invalidate_other_user: 'invalid user id'
 				})
 				.expect(400)
 				.expect({
@@ -508,6 +524,22 @@ describe('Authentication Controller', function(){
 				.expect(403)
 				.expect({
 					reason: 'Not authorized to invalidate this session'
+				})
+		})
+
+		it('should fail with 403 if a non-administrator requests to invalidate all sessions for another user', async function(){
+			const [cookie, payload, agent] = await do_login(true)
+
+			return request(app)
+				.delete('/api/v1/login')
+				.set('Cookie', cookie)
+				.send({
+					id: 'all',
+					invalidate_other_user: '000000000000000000000000'
+				})
+				.expect(403)
+				.expect({
+					reason: 'Not authorized to invalidate sessions for other users'
 				})
 		})
 
