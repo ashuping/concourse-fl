@@ -21,12 +21,18 @@ const debug = debugLib('concourse-server:server')
 var port = normalizePort(process.env.PORT || config.port);
 app.set('port', port);
 
-/**
- * Create HTTPS server.
- */
-var cert = fs.readFileSync(process.env.SSL_CERT || config.ssl.cert)
-var pkey = fs.readFileSync(process.env.SSL_PKEY || config.ssl.pkey)
-var server = https.createServer({cert: cert, key: pkey}, app);
+var server = null
+
+if(process.env.SSL_DISABLED || config.ssl.disabled){
+  server = http.createServer(app)
+}else{
+  /**
+   * Create HTTPS server.
+   */
+  var cert = fs.readFileSync(process.env.SSL_CERT || config.ssl.cert)
+  var pkey = fs.readFileSync(process.env.SSL_PKEY || config.ssl.pkey)
+  server = https.createServer({cert: cert, key: pkey}, app);
+}
 
 /**
  * Listen on provided port, on all network interfaces.
