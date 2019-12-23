@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/gh/ashuping/concourse-fl/branch/develop/graph/badge.svg)](https://codecov.io/gh/ashuping/concourse-fl) [![github actions](https://github.com/ashuping/concourse-fl/workflows/Backend%20tests/badge.svg)](https://github.com/ashuping/concourse-fl/actions)
 ![City of Concourse header](https://i.imgur.com/3yjrgNS.png)
 
 This repository holds the website for the (fictional) City of Concourse, Florida.
