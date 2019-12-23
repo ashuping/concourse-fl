@@ -1,4 +1,4 @@
-name: Backend automated tests
+name: Backend automated tests and code-coverage report
 
 on: [push, pull_request]
 
@@ -22,6 +22,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.lcov
+        flags: backend
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -34,5 +39,5 @@ jobs:
       run: |
         echo 'export default null' > ./concourse-server/config/config.js
         yarn install
-        yarn run build --if-present
-        yarn test
+        yarn backend-coverage
+        yarn backend-gh-report-coverage

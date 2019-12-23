@@ -31,3 +31,5 @@ concourse-server/config/config.js
 local/
 
 concourse-server/.nyc_output/
+
+coverage.lcov

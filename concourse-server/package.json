@@ -12,8 +12,7 @@
   "scripts": {
     "start": "nodemon ./bin/www",
     "test": "mocha-parallel-tests --require babel-core/register --reporter nyan --exit",
-    "test-sync": "mocha --require babel-core/register --exit",
-    "coverage": "nyc yarn test-sync"
+    "test-sync": "mocha --require babel-core/register --exit"
   },
   "dependencies": {
     "babel-core": "^6.26.3",
