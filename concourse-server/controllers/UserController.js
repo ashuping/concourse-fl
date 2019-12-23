@@ -227,7 +227,7 @@ export const RegisterUser = async (req, res, next) => {
 		campaigns: campaigns
 	})
 
-	user_profile.save()
+	await user_profile.save()
 
 	// Then, save login object with a link to the profile
 	const user_login = new UserLoginModel({
@@ -236,7 +236,7 @@ export const RegisterUser = async (req, res, next) => {
 		profile: user_profile._id
 	})
 
-	user_login.save()
+	await user_login.save()
 
 	// Return the profile object
 	return res.status(200).json(user_profile)
