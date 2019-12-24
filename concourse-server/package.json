@@ -12,9 +12,12 @@
   "scripts": {
     "start": "nodemon ./bin/www",
     "test": "mocha-parallel-tests --require babel-core/register --reporter nyan --exit",
-    "test-sync": "mocha --require babel-core/register --exit"
+    "test-sync": "mocha --require babel-core/register --exit",
+    "build": "babel -d ./build ./bin/www ."
   },
   "dependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "bcrypt": "^3.0.4-napi",

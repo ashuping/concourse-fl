@@ -27,6 +27,8 @@ export default {
 	// Port to run the server on
 	port: 5000, // PORT
 
+	client_files_path: 'concourse-client/build', // CLIENT_FILES_PATH
+
 	ssl: {
 		// Set to true to disable SSL.
 		disabled: false, // SSL_DISABLED
