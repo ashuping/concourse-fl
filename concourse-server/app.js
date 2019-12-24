@@ -55,6 +55,7 @@ app.use(cookieParser());
 app.use('/api/v1/voices', citizen_voice_router)
 app.use('/api/v1/login', authenticaion_router)
 app.use('/api/v1/users', user_router)
+app.use(express.static(process.env.CLIENT_FILES_PATH || config.client_files_path))
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
