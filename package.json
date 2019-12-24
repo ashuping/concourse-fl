@@ -17,9 +17,12 @@
 		"server": "yarn workspace concourse-server start",
 		"start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn client\"",
 		"frontend-build": "yarn workspace concourse-client build",
+		"backend-build": "yarn workspace concourse-server build",
+		"build": "concurrently --kill-others-on-fail \"yarn frontend-build\" \"yarn backend-build\"",
 		"backend-test": "yarn workspace concourse-server test",
 		"backend-coverage": "yarn workspace concourse-server nyc yarn test-sync",
-		"backend-gh-coverage-report": "yarn workspace concourse-server nyc report --reporter=text-lcov > coverage.lcov"
+		"backend-gh-coverage-report": "yarn workspace concourse-server nyc report --reporter=text-lcov > coverage.lcov",
+		"deploy": "yarn install && yarn build && yarn workspace concourse-server start"
 	},
 	"dependencies": {
 		"concurrently": "^5.0.1",
