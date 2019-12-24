@@ -28,6 +28,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: yarn install, build, and test
       env:
+        CLIENT_FILES_PATH: concourse-client/build
         AUTH_SECRET: embarrasing photo of spongebob at the christmas party
         AUTH_TKN_LIFETIME: 5m
         DB_URI: mongodb://root:password@localhost:27017/admin
@@ -36,6 +37,7 @@ jobs:
       run: |
         echo 'export default null' > ./concourse-server/config/config.js
         yarn install
+        yarn build
         yarn backend-coverage
         yarn backend-gh-coverage-report
     - uses: codecov/codecov-action@v1
