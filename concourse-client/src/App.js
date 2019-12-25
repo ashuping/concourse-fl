@@ -19,15 +19,17 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import './App.css'
 
 import { GetAllVoices, GetVoice } from './util/Voices'
+import { GetCurrentUser, GetUser } from './util/Users'
 
 import Header from './components/Header/Header'
 import LandingPageView from './views/LandingPageView/LandingPageView'
 import CitizenVoicesView from './views/CitizenVoicesView/CitizenVoicesView'
+import LoginView from './views/LoginView/LoginView'
 
-async function fetch_value(type, id, cache, set_cache){
+async function fetch_value(type, id, force, cache, set_cache){
 	switch(type){
 		case "all_voices":
-			if(cache && cache.voice && cache.voice.all){
+			if(!force && cache && cache.voice && cache.voice.all){
 				return Object.values(cache.voice).filter((val) => val !== true)
 			}else{
 				const all_voices = await GetAllVoices()
@@ -37,7 +39,7 @@ async function fetch_value(type, id, cache, set_cache){
 				return all_voices
 			}
 		case "voice":
-			if(cache && cache.voice && cache.voice[id]){
+			if(!force && cache && cache.voice && cache.voice[id]){
 				return cache.voice[id]
 			}else{
 				const new_voice = await GetVoice(id)
@@ -45,6 +47,25 @@ async function fetch_value(type, id, cache, set_cache){
 				cache.voice[id] = new_voice
 				set_cache(cache)
 				return new_voice
+			}
+		case "user":
+			if(id === "current"){
+				if(!force && cache && cache.current_user){
+					return cache.current_user
+				}else{
+					cache.current_user = await GetCurrentUser()
+					return cache.current_user
+				}
+			}else{
+				if(!force && cache && cache.users && cache.users[id]){
+					return cache.users[id]
+				}else{
+					const new_user = await GetUser(id)
+					if(!cache.users){cache.users = {}}
+					cache.users[id] = new_user
+					set_cache(cache)
+					return new_user
+				}
 			}
 		default:
 			console.error(`Attempted to call fetch_value for unknown type ${type} (id ${id}).`)
@@ -56,19 +77,27 @@ function App() {
 	const [cache, set_cache] = useState({})
 	const [title, set_title] = useState("City of Concourse")
 
+	const fetch_wrapper = (type, id, force) => fetch_value(type, id, force, cache, set_cache)
+
 	return (
 		<Router>
 			<Header title={title} />
 			<Switch>
 				<Route exact path="/">
 					<LandingPageView 
-						fetch={(type, id) => fetch_value(type, id, cache, set_cache)}
+						cfetch={fetch_wrapper}
 						set_title={set_title}
 					/>
 				</Route>
 				<Route path="/citizen-voices">
 					<CitizenVoicesView
-						fetch={(type, id) => fetch_value(type, id, cache, set_cache)}
+						cfetch={fetch_wrapper}
+						set_title={set_title}
+					/>
+				</Route>
+				<Route path="/login">
+					<LoginView 
+						cfetch={fetch_wrapper}
 						set_title={set_title}
 					/>
 				</Route>

@@ -169,7 +169,6 @@ export const RegisterUser = async (req, res, next) => {
 		&& req.body.email
 	)){
 		return res.status(400).json({
-			success: false,
 			reason: "Missing required field(s)"
 		})
 	}
@@ -178,7 +177,6 @@ export const RegisterUser = async (req, res, next) => {
 	const existing = await UserLoginModel.findOne({username: req.body.username})
 	if(existing){
 		return res.status(409).json({
-			success: false,
 			reason: "Username already taken"
 		})
 	}
@@ -240,4 +238,17 @@ export const RegisterUser = async (req, res, next) => {
 
 	// Return the profile object
 	return res.status(200).json(user_profile)
+}
+
+export const GetCurrentUser = async (req, res, next) => {
+	if(!req.user){
+		return res.sendStatus(500)
+	}
+
+	const found_user = await UserProfileModel.findById(req.user.user._id)
+	if(!found_user){
+		return res.sendStatus(500)
+	}
+
+	return res.status(200).json(found_user)
 }

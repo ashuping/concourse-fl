@@ -61,7 +61,9 @@ export default {
 		// loses connection (and is thus unable to make a renewal request)
 		// before their token expires, they will have to log in again, so don't
 		// make it TOO short.
-		token_lifetime: '5m' // AUTH_TKN_LIFETIME
+		// 
+		// Value must be in ms.
+		token_lifetime: '300000' // AUTH_TKN_LIFETIME
 	},
     db: {
 		// Mongodb URI to connect to - see 

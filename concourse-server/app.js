@@ -47,7 +47,7 @@ if(process.env.DB_DB || (config && config.db && config.db.db)){
 // view engine setup
 
 app.use(logger('dev'));
-app.use(cors({credentials: true, origin: ['http://localhost:3000', 'http://localhost:5000']}));
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
