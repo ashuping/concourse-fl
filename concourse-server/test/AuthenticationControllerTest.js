@@ -179,7 +179,7 @@ function validate_user_object(user, alternate){
 function validate_token_from_setcookie(res, alternate_user){
 	const setcookie = res.headers['set-cookie']
 	expect(setcookie).to.exist
-	const tkn_match = setcookie[0].toString().match(new RegExp(`^token=(.*); Max-Age=${config.auth.token_lifetime / 1000}; Path=\/api\/v1; Expires=Invalid Date; HttpOnly; SameSite=Strict$`))
+	const tkn_match = setcookie[0].toString().match(new RegExp(`^token=(.*); Max-Age=${config.auth.token_lifetime / 1000}; Path=\/api\/v1; Expires=Invalid Date; HttpOnly(?:; Secure)?; SameSite=Strict$`))
 	expect(tkn_match).to.exist.and.have.length(2)
 	const token = tkn_match[1]
 	expect(token).to.exist
