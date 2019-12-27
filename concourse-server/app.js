@@ -16,6 +16,7 @@
 
 import cors from 'cors'
 import createError from 'http-errors'
+import crypto from 'crypto'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
@@ -26,6 +27,10 @@ import config from './config/config.js'
 import citizen_voice_router from './routes/CitizenVoiceRoutes.js'
 import authenticaion_router from './routes/AuthenticationRoutes.js'
 import user_router from './routes/UserRoutes.js'
+
+import { UserLoginModel } from './models/UserLoginSchema.js'
+import { UserProfileModel } from './models/UserProfileSchema.js'
+import { RegistrationKeyModel } from './models/RegistrationKeySchema.js'
 
 import './passport.js'
 
@@ -44,7 +49,91 @@ if(process.env.DB_DB || (config && config.db && config.db.db)){
 	})
 }
 
-// view engine setup
+// Helper function to perform crypto.randomBytes as a promise
+function __promisified_crypto_random_bytes(count){
+	return new Promise(function(resolve, reject){
+		crypto.randomBytes(count, (err, buf) => {
+			if(err){reject(err)}
+			resolve(buf)
+		})
+	})
+}
+
+// Add initial login token if no users are present on startup
+async function initial_run_check(){
+
+	const found_users = await UserLoginModel.countDocuments()
+
+	if(!found_users){
+		const root_user_password = (await __promisified_crypto_random_bytes(256)).toString('hex')
+		const root_user_profile = new UserProfileModel({
+			username: "root",
+			display_name: "System",
+			pronouns: "000000000000000000000000",
+			emails: [{
+				address: "root@example.com",
+				verified: true,
+				primary: true
+			}],
+			administrator: true,
+			can_create_campaigns: true,
+			can_create_registration_keys: true,
+			campaigns: []
+		})
+
+		await root_user_profile.save()
+
+		const root_user_login = new UserLoginModel({
+			username: "root",
+			password: root_user_password,
+			profile: root_user_profile._id
+		})
+
+		await root_user_login.save()
+
+		const found_initial_key = await RegistrationKeyModel.findOne({text: process.env.REGISTRATION_INITIAL_KEY || config.registration.initial_key})
+
+		if(found_initial_key){
+			found_initial_key = new RegistrationKeyModel({
+				creator: root_user_profile._id,
+				text: process.env.REGISTRATION_INITIAL_KEY || config.registration.initial_key,
+				uses_total: 1,
+				uses_remaining: 1,
+				grants_administrator: true,
+				grants_create_campaigns: true,
+				grants_create_registration_keys: true
+			})
+
+			await found_initial_key.save()
+			return true
+		}else{
+			const initial_key = new RegistrationKeyModel({
+				creator: root_user_profile._id,
+				text: process.env.REGISTRATION_INITIAL_KEY || config.registration.initial_key,
+				uses_total: 1,
+				uses_remaining: 1,
+				grants_administrator: true,
+				grants_create_campaigns: true,
+				grants_create_registration_keys: true
+			})
+	
+			await initial_key.save()
+			return true
+		}
+	}
+
+	return false
+}
+
+initial_run_check()
+	.then((changed) => {
+		if(changed){
+			console.log(`Detected a new installation (no users currently present). A one-use administrator registration key, "${process.env.REGISTRATION_INITIAL_KEY || config.registration.initial_key}", has been created. Please register a new administrator account with this key.`)
+		}
+	})
+	.catch((err) => {
+		console.error(`Failed to perform the initial user check: ${err}`)
+	})
 
 app.use(logger('dev'));
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));

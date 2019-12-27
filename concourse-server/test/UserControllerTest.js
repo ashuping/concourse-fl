@@ -13,9 +13,11 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-import assert from 'assert'
 import chai from 'chai'
 import chai_as_promised from 'chai-as-promised'
+import request from 'supertest'
+import app from '../app.js'
+import {do_login} from './AuthenticationControllerTest.js'
 
 chai.use(chai_as_promised)
 
@@ -136,6 +138,14 @@ describe('User', function() {
 			return expect(
 				validate_campaigns([{id: "invalid"}])
 			).to.eventually.be.rejectedWith('Campaign id field "invalid" is malformed.')
+		})
+	})
+
+	describe('Get Current User function', function(){
+		it('should return 401 if the requesting user is unauthorized', async function(){
+			return request(app)
+				.get('/api/v1/users/current')
+				.expect(401)
 		})
 	})
 })

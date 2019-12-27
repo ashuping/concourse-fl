@@ -71,7 +71,8 @@ before(async function(){
 			primary: true
 		}],
 		administrator: true,
-		can_create: true,
+		can_create_campaigns: true,
+		can_create_registration_keys: true,
 		campaigns: []
 	})
 
@@ -110,7 +111,8 @@ before(async function(){
 			primary: true
 		}],
 		administrator: false,
-		can_create: true,
+		can_create_campaigns: true,
+		can_create_registration_keys: true,
 		campaigns: []
 	})
 
@@ -154,7 +156,8 @@ function validate_user_object(user, alternate){
 		expect(user.emails[0].verified).to.be.true
 		expect(user.emails[0].primary).to.be.true
 		expect(user.administrator).to.be.false
-		expect(user.can_create).to.be.true
+		expect(user.can_create_campaigns).to.be.true
+		expect(user.can_create_registration_keys).to.be.true
 		expect(user.campaigns).to.exist
 		expect(user.campaigns).to.be.empty
 	}else{
@@ -170,7 +173,8 @@ function validate_user_object(user, alternate){
 		expect(user.emails[0].verified).to.be.true
 		expect(user.emails[0].primary).to.be.true
 		expect(user.administrator).to.be.true
-		expect(user.can_create).to.be.true
+		expect(user.can_create_campaigns).to.be.true
+		expect(user.can_create_registration_keys).to.be.true
 		expect(user.campaigns).to.exist
 		expect(user.campaigns).to.be.empty
 	}
@@ -196,7 +200,7 @@ function validate_token_from_setcookie(res, alternate_user){
 	}
 }
 
-async function do_login(alternate_user, agent){
+export async function do_login(alternate_user, agent){
 	if(!agent){
 		agent = request.agent(app)
 	}

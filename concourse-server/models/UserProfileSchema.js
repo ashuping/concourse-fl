@@ -51,7 +51,11 @@ const userProfileSchema = new Schema({
 		type: Boolean,
 		required: true
 	},
-	can_create: {
+	can_create_campaigns: {
+		type: Boolean,
+		required: true
+	},
+	can_create_registration_keys: {
 		type: Boolean,
 		required: true
 	},

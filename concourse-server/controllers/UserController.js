@@ -18,8 +18,11 @@ import crypto from 'crypto'
 import fetch from 'node-fetch'
 import mongodb from 'mongodb'
 
+import config from '../config/config.js'
+
 import { UserLoginModel } from '../models/UserLoginSchema.js'
 import { UserProfileModel } from '../models/UserProfileSchema.js'
+import { RegistrationKeyModel } from '../models/RegistrationKeySchema.js'
 
 /* Checks a password against the HaveIBeenPwned breachlist. This is used to
  * to prevent users from using weak and/or breached passwords.
@@ -134,13 +137,9 @@ export const validate_campaigns = async (campaigns) => {
  *   display_name: (String) display name to use for this user
  *   pronouns: (ObjectId) link to PreferredPronounsSchema representing this user's preferred pronouns
  *   email: (String) Primary e-mail to use for the new user
- * 
- *   [Optional fields]
- *   campaigns: [{
- *     id: (ObjectId) link to CampaignSchema representing a campaign to add this user to
- *     admin: (Boolean) whether this user should be an administrator for this campaign
- *   }]
- *   administrator: (Boolean) whether the new user should be a global administrator
+ *   registration_key: (String) The registration key to use for this registration.
+ *                     NOTE that if the server does not require registration keys,
+ *                     this field is optional.
  * }
  * 
  * Returns 200 if the user was successfully created, 400 if some part of the input data is malformed,
@@ -173,6 +172,33 @@ export const RegisterUser = async (req, res, next) => {
 		})
 	}
 
+	let found_key = null
+	let set_campaigns = []
+	let make_admin = false
+	let let_create_campaigns = false
+	let let_create_registration_keys = false
+
+	if(process.env.REGISTRATION_KEYS_REQUIRED || (config && config.registration.keys_required)){
+		if(!req.body.registration_key){
+			return res.status(401).json({
+				reason: "A registration key is required"
+			})
+		}else{
+			found_key = await RegistrationKeyModel.findOne({text: req.body.registration_key})
+
+			if(!(found_key && (found_key.uses_total < 0 || found_key.uses_remaining > 0))){
+				return res.status(400).json({
+					reason: "Invalid or expired registration key"
+				})
+			}
+
+			set_campaigns = found_key.add_to_campaign ? [found_key.add_to_campaign] : []
+			make_admin = found_key.grants_administrator
+			let_create_campaigns = found_key.grants_create_campaigns
+			let_create_registration_keys = found_key.grants_create_registration_keys
+		}
+	}
+
 	// Check that no existing users have this password
 	const existing = await UserLoginModel.findOne({username: req.body.username})
 	if(existing){
@@ -190,26 +216,6 @@ export const RegisterUser = async (req, res, next) => {
 		})
 	}
 
-	// Add the user to the listed campaigns
-	let campaigns = []
-	if(req.body.campaigns){
-		try{
-			campaigns = validate_campaigns(req.body.campaigns)
-		}catch(e){
-			if(Object.keys(e).contains("code") && Object.keys(e).contains("message")){
-				// If validate_campaigns raises an exception, it should only be
-				// because of malformed input - return the appropriate data.
-				return res.status(e.code).json({
-					reason: e.message
-				})
-			}else{
-				// In case something else throws an error in that message, send
-				// a 500 error code. Hopefully, we never reach this line.
-				return res.sendStatus(500)
-			}
-		}
-	}
-
 	// Save profile object first, so that it can be linked to the login object
 	const user_profile = new UserProfileModel({
 		username: req.body.username,
@@ -220,9 +226,10 @@ export const RegisterUser = async (req, res, next) => {
 			verified: false,
 			primary: true
 		}],
-		administrator: false,
-		can_create: false,
-		campaigns: campaigns
+		administrator: make_admin,
+		can_create_campaigns: let_create_campaigns,
+		can_create_registration_keys: let_create_registration_keys,
+		campaigns: set_campaigns
 	})
 
 	await user_profile.save()
@@ -235,6 +242,15 @@ export const RegisterUser = async (req, res, next) => {
 	})
 
 	await user_login.save()
+
+	if(found_key && found_key.uses_total > 0){
+		found_key.uses_remaining -= 1
+		if(found_key.uses_remaining === 0){
+			await found_key.remove()
+		}else{
+			await found_key.save()
+		}
+	}
 
 	// Return the profile object
 	return res.status(200).json(user_profile)
@@ -251,4 +267,92 @@ export const GetCurrentUser = async (req, res, next) => {
 	}
 
 	return res.status(200).json(found_user)
+}
+
+export const CreateRegistrationKey = async (req, res, next) => {
+	if(!req.user){
+		return res.sendStatus(500)
+	}
+
+	if(!req.user.user.can_create_registration_keys){
+		return req.status(403).json({
+			reason: "Not authorized to create new registration keys"
+		})
+	}
+
+	if(!req.body.text){
+		return req.status(400).json({
+			reason: "Missing key text"
+		})
+	}
+
+	if(req.body.grants_administrator && !req.user.user.administrator){
+		return res.status(403).json({
+			reason: "Not authorized to grant administrator permissions"
+		})
+	}
+
+	if(req.body.grants_create_campaigns && !(req.user.user.can_create_campaigns || req.user.user.administrator)){
+		return res.status(403).json({
+			reason: "Not authorized to grant create_campaigns permissions"
+		})
+	}
+
+	if(req.body.grants_create_registration_keys && !(req.user.user.can_create_registration_keys || req.user.user.administrator)){
+		return res.status(403).json({
+			reason: "Not authorized to grant create_registration_keys permissions"
+		})
+	}
+
+	const existing_key = await RegistrationKeyModel.findOne({text: req.body.text})
+	if(existing_key){
+		return res.status(409).json({
+			reason: "Another key with this text already exists"
+		})
+	}
+
+	const new_key = new RegistrationKeyModel({
+		creator: req.user.user._id,
+		text: req.body.text,
+		grants_administrator: req.body.grants_administrator,
+		grants_create_campaigns: req.body.grants_create_campaigns,
+		grants_create_registration_keys: req.body.grants_create_registration_keys
+	})
+
+	if(req.body.uses_total){
+		new_key.uses_total = req.body.uses_total
+		new_key.uses_remaining = req.body.uses_total
+	}
+
+	if(req.body.add_to_campaign){
+		if(req.user.user.campaigns.filter((camp) => 
+			camp.id === req.body.add_to_campaign
+			&& camp.admin
+		).length > 0){
+			new_key.add_to_campaign = req.body.add_to_campaign
+		}else{
+			return res.status(403).json({
+				reason: "You must be an administrator in a campaign to create a registration key for it."
+			})
+		}
+	}
+
+	if(req.body.expire_date){
+		const parsed_expire_date = new Date(req.body.expire_date)
+		if(!parsed_expire_date){
+			return res.status(400).json({
+				reason: "Expiration date cannot be parsed."
+			})
+		}
+		if(parsed_expire_date < Date.now){
+			return res.status(400).json({
+				reason: "Expiration date is in the past."
+			})
+		}
+		new_key.expire_date = parsed_expire_date
+	}
+
+	await new_key.save()
+
+	return res.status(200).json(new_key)
 }
