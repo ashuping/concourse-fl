@@ -127,6 +127,12 @@ export const validate_campaigns = async (campaigns) => {
 	return parsed_campaigns
 }
 
+export const GetRegistrationOptions = async (req, res, next) => {
+	return res.status(200).json({
+		keys_required: process.env.REGISTRATION_KEYS_REQUIRED || (config && config.registration.keys_required)
+	})
+}
+
 /* User registration function
  * 
  * Expects the following fields:
@@ -165,6 +171,11 @@ export const RegisterUser = async (req, res, next) => {
 		&& req.body.password
 		&& req.body.display_name
 		&& req.body.pronouns
+		&& req.body.pronouns.subject
+		&& req.body.pronouns.object
+		&& req.body.pronouns.dependent_possessive
+		&& req.body.pronouns.independent_possessive
+		&& req.body.pronouns.reflexive
 		&& req.body.email
 	)){
 		return res.status(400).json({
@@ -220,7 +231,13 @@ export const RegisterUser = async (req, res, next) => {
 	const user_profile = new UserProfileModel({
 		username: req.body.username,
 		display_name: req.body.display_name,
-		pronouns: req.body.pronouns,
+		pronouns: {
+			subject: req.body.pronouns.subject,
+			object: req.body.pronouns.object,
+			dependent_possessive: req.body.pronouns.dependent_possessive,
+			independent_possessive: req.body.pronouns.independent_possessive,
+			reflexive: req.body.pronouns.reflexive
+		},
 		emails: [{
 			address: req.body.email,
 			verified: false,

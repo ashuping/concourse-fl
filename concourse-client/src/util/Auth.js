@@ -29,7 +29,7 @@ import { Backend } from './Connect'
  */
 async function Login(username, password, persist_session){
     if(persist_session){
-        console.error("Persistent sessions are not yet implemented")
+        console.error("Persistent sessions are not yet implemented. This option will be ignored.")
     }
     const res =  await fetch(`${Backend()}/api/v1/login`, {
         method: 'POST',

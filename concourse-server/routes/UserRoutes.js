@@ -18,9 +18,10 @@ import express from 'express'
 import passport from 'passport'
 const Router = express.Router()
 
-import { RegisterUser, GetCurrentUser } from '../controllers/UserController.js'
+import { RegisterUser, GetCurrentUser, GetRegistrationOptions } from '../controllers/UserController.js'
 
-Router.post('/', RegisterUser)
+Router.post('/create', RegisterUser)
+Router.get('/create', GetRegistrationOptions)
 Router.get('/current', passport.authenticate('jwt', {session: false}), GetCurrentUser)
 
 export default Router

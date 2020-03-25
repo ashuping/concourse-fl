@@ -16,20 +16,61 @@
 
 import { Backend } from './Connect'
 
+async function GetRegistrationOptions(){
+	const res = await fetch(`${Backend()}/api/v1/users/create`)
+
+	if(res.status === 200){
+		return res.json()
+	}else{
+		return null
+	}
+}
+
+async function Register(
+	username,
+	password,
+	display_name,
+	pronouns,
+	email,
+	registration_key
+){
+	const res = await fetch(`${Backend()}/api/v1/users/create`, {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			username: username,
+			password: password,
+			display_name: display_name,
+			pronouns: pronouns,
+			email: email,
+			registration_key: registration_key
+		})
+	})
+
+	if(res.status === 200){
+		return res.json()
+	}else{
+		return null
+	}
+}
+
 /**
  * Retrieves the currently logged-in user from the backend
  * 
  * @returns the currently logged-in user, or null if not logged in
  */
 async function GetCurrentUser(){
-    const user = await fetch(`${Backend()}/api/v1/users/current`, {
-        credentials: 'same-origin'
-    })
-    if(user.status === 200){
-        return user.json()
-    }else{
-        return null
-    }
+	const user = await fetch(`${Backend()}/api/v1/users/current`, {
+		credentials: 'same-origin'
+	})
+	if(user.status === 200){
+		return user.json()
+	}else{
+		return null
+	}
 
 }
 
@@ -41,15 +82,15 @@ async function GetCurrentUser(){
  * @returns the requested user, or null if the lookup fails
  */
 async function GetUser(id){
-    const user = await fetch(`${Backend()}/api/v1/users/${id}`, {
-        credentials: 'include'
-    })
+	const user = await fetch(`${Backend()}/api/v1/users/i/${id}`, {
+		credentials: 'include'
+	})
 
-    if(user.status === 200){
-        return user.json()
-    }else{
-        return null
-    }
+	if(user.status === 200){
+		return user.json()
+	}else{
+		return null
+	}
 }
 
 export { GetCurrentUser, GetUser }

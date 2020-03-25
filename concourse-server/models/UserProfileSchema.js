@@ -22,16 +22,34 @@ const ObjectId = Schema.ObjectId
 const userProfileSchema = new Schema({
 	username: {
 		type: String,
-        required: true,
-        unique: true
+		required: true,
+		unique: true
 	},
 	display_name: {
 		type: String,
 		required: true
 	},
 	pronouns: {
-		type: ObjectId,
-		required: true
+		subject: { // they
+			type: String,
+			requried: true
+		},
+		object: { // them
+			type: String,
+			required: true
+		},
+		dependent_possessive: { // their
+			type: String,
+			required: true
+		},
+		independent_possessive: { // theirs
+			type: String,
+			required: true
+		},
+		reflexive: { // themself
+			type: String,
+			required: true
+		}
 	},
 	emails: [{
 		address: {
