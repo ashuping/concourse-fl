@@ -10,17 +10,17 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "nodemon ./bin/www.js",
     "test": "mocha-parallel-tests --require babel-core/register --reporter nyan --exit",
     "test-sync": "mocha --require babel-core/register --exit",
-    "build": "babel -d ./build ./bin/www ."
+    "build": "babel -d ./build ./bin/www.js ."
   },
   "dependencies": {
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "bcrypt": "^3.0.4-napi",
+    "bcrypt": "^5.0.0",
     "concurrently": "^5.0.1",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",

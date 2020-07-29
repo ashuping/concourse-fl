@@ -33,3 +33,7 @@ local/
 concourse-server/.nyc_output/
 
 coverage.lcov
+
+concourse-client/build/
+
+concourse-server/build/
