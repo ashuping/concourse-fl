@@ -19,12 +19,13 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import './App.css'
 
 import { GetAllVoices, GetVoice } from './util/Voices'
-import { GetCurrentUser, GetUser } from './util/Users'
+import { GetCurrentUser, GetUser, GetRegistrationOptions } from './util/Users'
 
 import Header from './components/Header/Header'
 import LandingPageView from './views/LandingPageView/LandingPageView'
 import CitizenVoicesView from './views/CitizenVoicesView/CitizenVoicesView'
 import LoginView from './views/LoginView/LoginView'
+import RegisterView from './views/RegisterView/RegisterView'
 
 async function fetch_value(type, id, force, cache, set_cache){
 	switch(type){
@@ -67,6 +68,13 @@ async function fetch_value(type, id, force, cache, set_cache){
 					return new_user
 				}
 			}
+		case "registration_options":
+			if(!force && cache && cache.registration_options){
+				return cache.registration_options
+			}else{
+				cache.registration_options = await GetRegistrationOptions()
+				return cache.registration_options
+			}
 		default:
 			console.error(`Attempted to call fetch_value for unknown type ${type} (id ${id}).`)
 			return null
@@ -97,6 +105,12 @@ function App() {
 				</Route>
 				<Route path="/login">
 					<LoginView 
+						cfetch={fetch_wrapper}
+						set_title={set_title}
+					/>
+				</Route>
+				<Route path="/register">
+					<RegisterView 
 						cfetch={fetch_wrapper}
 						set_title={set_title}
 					/>

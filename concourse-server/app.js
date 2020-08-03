@@ -69,9 +69,15 @@ async function initial_run_check(){
 		const root_user_profile = new UserProfileModel({
 			username: "root",
 			display_name: "System",
-			pronouns: "000000000000000000000000",
+			pronouns: {
+				subject: "it",
+				object: "it",
+				dependent_possessive: "its",
+				independent_possessive: "its",
+				reflexive: "itself"
+			},
 			emails: [{
-				address: "root@example.com",
+				address: "root@concourse.city",
 				verified: true,
 				primary: true
 			}],

@@ -93,4 +93,4 @@ async function GetUser(id){
 	}
 }
 
-export { GetCurrentUser, GetUser }
+export { GetCurrentUser, GetUser, GetRegistrationOptions }
