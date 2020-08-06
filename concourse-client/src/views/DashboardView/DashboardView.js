@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 
 function DashboardView({cfetch, set_title}){
     const [user, set_user] = useState(null)

@@ -66,7 +66,6 @@ function RegisterView({cfetch, set_title}){
 	const [pronouns_rfx, set_pronouns_rfx] = useState("")
 	const [regcode, set_regcode] = useState("")
 	const [email, set_email] = useState("temp@coolbooks.biz")
-	const [persist, set_persist] = useState(false)
 
 	const [btn_enabled, set_btn_enabled] = useState(false)
 
@@ -88,7 +87,7 @@ function RegisterView({cfetch, set_title}){
 		}else{
 			set_btn_enabled(false)
 		}
-	}, [username, password, display_name, pronouns_option, pronouns_dps, pronouns_ips, pronouns_obj, pronouns_rfx, pronouns_sub, regcode, persist, regcode_required])
+	}, [username, password, display_name, pronouns_option, pronouns_dps, pronouns_ips, pronouns_obj, pronouns_rfx, pronouns_sub, regcode, regcode_required])
 
 	const on_register = useCallback(async () => {
 		if(!btn_enabled){return}
