@@ -99,13 +99,14 @@ export const Login = (req, res, next) => {
 					'token',
 					jwt.sign(token, process.env.AUTH_SECRET || config.auth.secret, {expiresIn: process.env.AUTH_TKN_LIFETIME || config.auth.token_lifetime}),
 					{
-						secure: true,
+						secure: (process.env.NODE_ENV=='production' ? true : false),
 						sameSite: 'strict',
-						path: '/api/v1/login',
-						httpOnly: true
+						path: '/api/v1',
+						httpOnly: true,
+						maxAge: (process.env.AUTH_TKN_LIFETIME || config.auth.token_lifetime)
 					}).json({
 						id: blacklist_entry._id,
-						user: user
+						user: user.toJSON()
 					})
 			})
 		})(req, res)
@@ -146,13 +147,14 @@ export const Login = (req, res, next) => {
 					'token',
 					jwt.sign(token, process.env.AUTH_SECRET || config.auth.secret, {expiresIn: process.env.AUTH_TKN_LIFETIME || config.auth.token_lifetime}),
 					{
-						secure: true,
+						secure: (process.env.NODE_ENV=='production' ? true : false),
 						sameSite: 'strict',
-						path: '/api/v1/login',
-						httpOnly: true
+						path: '/api/v1',
+						httpOnly: true,
+						maxAge: (process.env.AUTH_TKN_LIFETIME || config.auth.token_lifetime)
 					}).json({
 						id: blacklist_entry._id,
-						user: user.user
+						user: user.user.toJSON()
 					})
 			})
 		})(req, res)

@@ -28,16 +28,16 @@ function CitizenVoice({name, occupation, quote}){
 	</div>
 }
 
-function CitizenVoicesView({fetch, set_title}){
+function CitizenVoicesView({cfetch, set_title}){
 	const [voices, set_voices] = useState(null)
 	const [load_done, set_load_done] = useState(false)
 
 	useEffect(() => {
-		fetch("all_voices", null).then((voices) => {
+		cfetch("all_voices", null).then((voices) => {
 			set_voices(voices)
 			set_load_done(true)
 		})
-	}, [fetch])
+	}, [cfetch])
 
 	useEffect(() => {
 		set_title("Citizen Voices")

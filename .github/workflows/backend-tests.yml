@@ -29,8 +29,9 @@ jobs:
     - name: yarn install, build, and test
       env:
         CLIENT_FILES_PATH: concourse-client/build
+        REGISTRATION_KEYS_REQUIRED: false
         AUTH_SECRET: embarrasing photo of spongebob at the christmas party
-        AUTH_TKN_LIFETIME: 5m
+        AUTH_TKN_LIFETIME: 300000
         DB_URI: mongodb://root:password@localhost:27017/admin
         DB_DB: concourse
         CI: true

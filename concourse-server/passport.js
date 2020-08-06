@@ -39,6 +39,11 @@ passport.use(new pl.Strategy({
 	}, async function(username, password, callback){
 		const auth_fail_message = 'Authentication failure'
 
+		if(username === 'root'){
+			// It should never be possible to login as the root user.
+			return callback(null, false, {message: auth_fail_message})
+		}
+
 		const found_user = await UserLoginModel.findOne({username})
 		if(!found_user){
 			return callback(null, false, {message: auth_fail_message})
@@ -70,6 +75,11 @@ passport.use(new jwt.Strategy({
 		}, jwt.ExtractJwt.fromAuthHeaderAsBearerToken()]),
 		secretOrKey: process.env.AUTH_SECRET || config.auth.secret
 	}, async function(payload, callback){
+
+		if(payload.user.username === 'root'){
+			// It should never be possible to login as the root user.
+			return callback(null, null)
+		}
 
 		const blacklist_entry = await TokenBlacklistModel.findById(payload.id)
 		if(!blacklist_entry || blacklist_entry.blacklisted){

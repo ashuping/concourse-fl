@@ -29,6 +29,21 @@ export default {
 
 	client_files_path: 'concourse-client/build', // CLIENT_FILES_PATH
 
+	registration: {
+		// Set to true to require a key to be entered before a user can register
+		keys_required: true, // REGISTRATION_KEYS_REQUIRED
+
+		// A key for initial setup.
+		// 
+		// The first time the system is started, it will detect an empty user
+		// database, and enable a one-time registration with the key below, so
+		// that you can create an initial account for administration. Note that
+		// this key is one-use only and grants administrator access. This key
+		// is only used when there are no users in the database - it will be
+		// enabled regardless of the `keys_required` setting above.
+		initial_key: 'Go, Searise!' // REGISTRATION_INITIAL_KEY
+	},
+
 	ssl: {
 		// Set to true to disable SSL.
 		disabled: false, // SSL_DISABLED
@@ -61,7 +76,9 @@ export default {
 		// loses connection (and is thus unable to make a renewal request)
 		// before their token expires, they will have to log in again, so don't
 		// make it TOO short.
-		token_lifetime: '5m' // AUTH_TKN_LIFETIME
+		// 
+		// Value must be in ms.
+		token_lifetime: '300000' // AUTH_TKN_LIFETIME
 	},
     db: {
 		// Mongodb URI to connect to - see 

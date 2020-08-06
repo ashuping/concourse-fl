@@ -64,14 +64,21 @@ before(async function(){
 	const new_user_profile = new UserProfileModel({
 		username: "lyra",
 		display_name: "Lyra [TESTING USER - DELETE IF IN PRODUCTION]",
-		pronouns: "000000000000000000000000",
+		pronouns: {
+			"subject": "they",
+			"object": "them",
+			"dependent_possessive": "their",
+			"independent_possessive": "theirs",
+			"reflexive": "themself"
+		},
 		emails: [{
 			address: "lyra@coolbooks.biz",
 			verified: true,
 			primary: true
 		}],
 		administrator: true,
-		can_create: true,
+		can_create_campaigns: true,
+		can_create_registration_keys: true,
 		campaigns: []
 	})
 
@@ -103,14 +110,21 @@ before(async function(){
 	const new_user_profile_2 = new UserProfileModel({
 		username: "lyra-2",
 		display_name: "Lyra-2 [TESTING USER - DELETE IF IN PRODUCTION]",
-		pronouns: "000000000000000000000000",
+		pronouns: {
+			"subject": "they",
+			"object": "them",
+			"dependent_possessive": "their",
+			"independent_possessive": "theirs",
+			"reflexive": "themself"
+		},
 		emails: [{
 			address: "lyra2@coolbooks.biz",
 			verified: true,
 			primary: true
 		}],
 		administrator: false,
-		can_create: true,
+		can_create_campaigns: true,
+		can_create_registration_keys: true,
 		campaigns: []
 	})
 
@@ -140,13 +154,19 @@ after(async function(){
 	}
 })
 
-function validate_user_object(user, alternate){
+export function validate_user_object(user, alternate){
 	if(alternate){
 		expect(user).to.exist
 		expect(user._id).to.exist
 		expect(user.username).to.equal('lyra-2')
 		expect(user.display_name).to.equal('Lyra-2 [TESTING USER - DELETE IF IN PRODUCTION]')
-		expect(user.pronouns).to.equal('000000000000000000000000')
+		expect(user.pronouns).to.deep.equal({
+			"subject": "they",
+			"object": "them",
+			"dependent_possessive": "their",
+			"independent_possessive": "theirs",
+			"reflexive": "themself"
+		})
 		expect(user.emails).to.exist
 		expect(user.emails).to.have.length(1)
 		expect(user.emails[0]).to.exist
@@ -154,7 +174,8 @@ function validate_user_object(user, alternate){
 		expect(user.emails[0].verified).to.be.true
 		expect(user.emails[0].primary).to.be.true
 		expect(user.administrator).to.be.false
-		expect(user.can_create).to.be.true
+		expect(user.can_create_campaigns).to.be.true
+		expect(user.can_create_registration_keys).to.be.true
 		expect(user.campaigns).to.exist
 		expect(user.campaigns).to.be.empty
 	}else{
@@ -162,7 +183,13 @@ function validate_user_object(user, alternate){
 		expect(user._id).to.exist
 		expect(user.username).to.equal('lyra')
 		expect(user.display_name).to.equal('Lyra [TESTING USER - DELETE IF IN PRODUCTION]')
-		expect(user.pronouns).to.equal('000000000000000000000000')
+		expect(user.pronouns).to.deep.equal({
+			"subject": "they",
+			"object": "them",
+			"dependent_possessive": "their",
+			"independent_possessive": "theirs",
+			"reflexive": "themself"
+		})
 		expect(user.emails).to.exist
 		expect(user.emails).to.have.length(1)
 		expect(user.emails[0]).to.exist
@@ -170,7 +197,8 @@ function validate_user_object(user, alternate){
 		expect(user.emails[0].verified).to.be.true
 		expect(user.emails[0].primary).to.be.true
 		expect(user.administrator).to.be.true
-		expect(user.can_create).to.be.true
+		expect(user.can_create_campaigns).to.be.true
+		expect(user.can_create_registration_keys).to.be.true
 		expect(user.campaigns).to.exist
 		expect(user.campaigns).to.be.empty
 	}
@@ -179,7 +207,7 @@ function validate_user_object(user, alternate){
 function validate_token_from_setcookie(res, alternate_user){
 	const setcookie = res.headers['set-cookie']
 	expect(setcookie).to.exist
-	const tkn_match = setcookie[0].toString().match(/^token=(.*); Path=\/api\/v1\/login; HttpOnly; Secure; SameSite=Strict$/)
+	const tkn_match = setcookie[0].toString().match(new RegExp(`^token=(.*); Max-Age=${(process.env.AUTH_TKN_LIFETIME || config.auth.token_lifetime) / 1000}; Path=\/api\/v1; Expires=Invalid Date; HttpOnly(?:; Secure)?; SameSite=Strict$`))
 	expect(tkn_match).to.exist.and.have.length(2)
 	const token = tkn_match[1]
 	expect(token).to.exist
@@ -196,7 +224,7 @@ function validate_token_from_setcookie(res, alternate_user){
 	}
 }
 
-async function do_login(alternate_user, agent){
+export async function do_login(alternate_user, agent){
 	if(!agent){
 		agent = request.agent(app)
 	}

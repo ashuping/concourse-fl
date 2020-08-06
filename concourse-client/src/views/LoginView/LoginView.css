@@ -1,4 +1,4 @@
-/* City of Concourse Website - User Management Routes
+/* City of Concourse Website - Login page
 	Copyright 2019 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,23 @@
 	limitations under the License.
  */
 
-import express from 'express'
-import passport from 'passport'
-const Router = express.Router()
+.login-view{
+    overflow: hidden;
+}
 
-import { RegisterUser, GetCurrentUser, GetRegistrationOptions } from '../controllers/UserController.js'
+.login-view table{
+    width: 100%;
+}
 
-Router.post('/create', RegisterUser)
-Router.get('/create', GetRegistrationOptions)
-Router.get('/current', passport.authenticate('jwt', {session: false}), GetCurrentUser)
+.login-view h1{
+    font-size: large;
+}
 
-export default Router
+.login-view h2{
+    font-size: medium;
+}
+
+.login-view input{
+    margin: 1em 0;
+    width: calc(100% - 2em - 4px);
+}
