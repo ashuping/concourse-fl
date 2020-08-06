@@ -17,7 +17,7 @@ import chai from 'chai'
 import chai_as_promised from 'chai-as-promised'
 import request from 'supertest'
 import app from '../app.js'
-import {do_login} from './AuthenticationControllerTest.js'
+import { do_login, validate_user_object } from './AuthenticationControllerTest.js'
 
 chai.use(chai_as_promised)
 
@@ -110,7 +110,7 @@ describe('User', function() {
 		it('should disallow an object which is not an array', async function(){
 			return expect(
 				validate_campaigns(37)
-			).to.be.rejectedWith(`"campaigns" field is present but is not an array`)
+			).to.eventually.be.rejectedWith(`"campaigns" field is present but is not an array`)
 		})
 
 		it('should disallow an array containing malformed entries', async function(){
@@ -146,6 +146,15 @@ describe('User', function() {
 			return request(app)
 				.get('/api/v1/users/current')
 				.expect(401)
+		})
+
+		it('should return valid user data if the requesting user is logged in', async function(){
+			const [cookie, payload, agent] = await do_login(true)
+			return request(app)
+				.get('/api/v1/users/current')
+				.set('Cookie', cookie)
+				.expect(200)
+				.expect((res) => validate_user_object(res.body, true))
 		})
 	})
 })

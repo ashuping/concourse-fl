@@ -154,7 +154,7 @@ after(async function(){
 	}
 })
 
-function validate_user_object(user, alternate){
+export function validate_user_object(user, alternate){
 	if(alternate){
 		expect(user).to.exist
 		expect(user._id).to.exist

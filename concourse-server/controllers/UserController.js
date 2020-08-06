@@ -280,11 +280,14 @@ export const RegisterUser = async (req, res, next) => {
 }
 
 export const GetCurrentUser = async (req, res, next) => {
+	// We should never reach this section, so exclude from coverage report
+	/* istanbul ignore if */
 	if(!req.user){
 		return res.sendStatus(500)
 	}
 
 	const found_user = await UserProfileModel.findById(req.user.user._id)
+	/* istanbul ignore if */
 	if(!found_user){
 		return res.sendStatus(500)
 	}
@@ -293,6 +296,7 @@ export const GetCurrentUser = async (req, res, next) => {
 }
 
 export const CreateRegistrationKey = async (req, res, next) => {
+	/* istanbul ignore if */
 	if(!req.user){
 		return res.sendStatus(500)
 	}
