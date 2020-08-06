@@ -64,7 +64,13 @@ before(async function(){
 	const new_user_profile = new UserProfileModel({
 		username: "lyra",
 		display_name: "Lyra [TESTING USER - DELETE IF IN PRODUCTION]",
-		pronouns: "000000000000000000000000",
+		pronouns: {
+			"subject": "they",
+			"object": "them",
+			"dependent_possessive": "their",
+			"independent_possessive": "theirs",
+			"reflexive": "themself"
+		},
 		emails: [{
 			address: "lyra@coolbooks.biz",
 			verified: true,
@@ -104,7 +110,13 @@ before(async function(){
 	const new_user_profile_2 = new UserProfileModel({
 		username: "lyra-2",
 		display_name: "Lyra-2 [TESTING USER - DELETE IF IN PRODUCTION]",
-		pronouns: "000000000000000000000000",
+		pronouns: {
+			"subject": "they",
+			"object": "them",
+			"dependent_possessive": "their",
+			"independent_possessive": "theirs",
+			"reflexive": "themself"
+		},
 		emails: [{
 			address: "lyra2@coolbooks.biz",
 			verified: true,
@@ -148,7 +160,13 @@ function validate_user_object(user, alternate){
 		expect(user._id).to.exist
 		expect(user.username).to.equal('lyra-2')
 		expect(user.display_name).to.equal('Lyra-2 [TESTING USER - DELETE IF IN PRODUCTION]')
-		expect(user.pronouns).to.equal('000000000000000000000000')
+		expect(user.pronouns).to.deep.equal({
+			"subject": "they",
+			"object": "them",
+			"dependent_possessive": "their",
+			"independent_possessive": "theirs",
+			"reflexive": "themself"
+		})
 		expect(user.emails).to.exist
 		expect(user.emails).to.have.length(1)
 		expect(user.emails[0]).to.exist
@@ -165,7 +183,13 @@ function validate_user_object(user, alternate){
 		expect(user._id).to.exist
 		expect(user.username).to.equal('lyra')
 		expect(user.display_name).to.equal('Lyra [TESTING USER - DELETE IF IN PRODUCTION]')
-		expect(user.pronouns).to.equal('000000000000000000000000')
+		expect(user.pronouns).to.deep.equal({
+			"subject": "they",
+			"object": "them",
+			"dependent_possessive": "their",
+			"independent_possessive": "theirs",
+			"reflexive": "themself"
+		})
 		expect(user.emails).to.exist
 		expect(user.emails).to.have.length(1)
 		expect(user.emails[0]).to.exist

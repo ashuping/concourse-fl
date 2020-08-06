@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "nodemon ./bin/www.js",
-    "test": "mocha-parallel-tests --require babel-core/register --reporter nyan --exit",
+    "test": "mocha --require babel-core/register --reporter nyan --exit",
     "test-sync": "mocha --require babel-core/register --exit",
     "build": "babel -d ./build ./bin/www.js ."
   },
@@ -41,7 +41,6 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.2.2",
-    "mocha-parallel-tests": "^2.2.2",
     "nyc": "^15.0.0",
     "supertest": "^4.0.2"
   }

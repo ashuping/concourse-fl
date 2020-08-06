@@ -100,15 +100,13 @@ async function initial_run_check(){
 		const found_initial_key = await RegistrationKeyModel.findOne({text: process.env.REGISTRATION_INITIAL_KEY || config.registration.initial_key})
 
 		if(found_initial_key){
-			found_initial_key = new RegistrationKeyModel({
-				creator: root_user_profile._id,
-				text: process.env.REGISTRATION_INITIAL_KEY || config.registration.initial_key,
-				uses_total: 1,
-				uses_remaining: 1,
-				grants_administrator: true,
-				grants_create_campaigns: true,
-				grants_create_registration_keys: true
-			})
+			found_initial_key.creator = root_user_profile.id,
+			found_initial_key.text = process.env.REGISTRATION_INITIAL_KEY || config.registration.initial_key,
+			found_initial_key.uses_total = 1
+			found_initial_key.uses_remaining = 1
+			found_initial_key.grants_administrator = true
+			found_initial_key.grants_create_campaigns = true
+			found_initial_key.grants_create_registration_keys = true
 
 			await found_initial_key.save()
 			return true
