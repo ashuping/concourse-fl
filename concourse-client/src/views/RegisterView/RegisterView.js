@@ -18,15 +18,41 @@ import React, { useState, useEffect, useCallback } from 'react'
 
 import { Link, Redirect } from 'react-router-dom'
 
-import { Register } from '../../util/User'
+import { Register } from '../../util/Users'
+
+import { Login } from '../../util/Auth'
 
 import bg from '../../assets/starry-sky-bg.svg'
 
 import './RegisterView.css'
 
+const pronouns_they_them = {
+	"subject": "they",
+	"object": "them",
+	"dependent_possessive": "their",
+	"independent_possessive": "theirs",
+	"reflexive": "themself"
+}
+
+const pronouns_she_her = {
+	"subject": "she",
+	"object": "her",
+	"dependent_possessive": "her",
+	"independent_possessive": "hers",
+	"reflexive": "herself"
+}
+
+const pronouns_he_him = {
+	"subject": "he",
+	"object": "him",
+	"dependent_possessive": "his",
+	"independent_possessive": "his",
+	"reflexive": "himself"
+}
+
 function RegisterView({cfetch, set_title}){
 	const [user, set_user] = useState(null)
-	const [login_warning, set_login_warning] = useState(null)
+	const [reg_warning, set_reg_warning] = useState(null)
 	const [regcode_required, set_regcode_required] = useState(false)
 
 	const [username, set_username] = useState("")
@@ -39,6 +65,7 @@ function RegisterView({cfetch, set_title}){
 	const [pronouns_ips, set_pronouns_ips] = useState("")
 	const [pronouns_rfx, set_pronouns_rfx] = useState("")
 	const [regcode, set_regcode] = useState("")
+	const [email, set_email] = useState("temp@coolbooks.biz")
 	const [persist, set_persist] = useState(false)
 
 	const [btn_enabled, set_btn_enabled] = useState(false)
@@ -66,25 +93,55 @@ function RegisterView({cfetch, set_title}){
 	const on_register = useCallback(async () => {
 		if(!btn_enabled){return}
 
+		let pronouns = {
+			"subject": pronouns_sub,
+			"object" : pronouns_obj,
+			"dependent_possessive"  : pronouns_dps,
+			"independent_possessive": pronouns_ips,
+			"reflexive": pronouns_rfx
+		}
+
+		if(pronouns_option === "they"){
+			pronouns = pronouns_they_them
+		}else if(pronouns_option === "she"){
+			pronouns = pronouns_she_her
+		}else if(pronouns_option === "he"){
+			pronouns = pronouns_he_him
+		}
+
 		set_btn_enabled(false)
 		const res = await Register(
-
+			username, password, display_name, pronouns, email, regcode
 		)
 		set_btn_enabled(true)
 
-		if(res.success){
-			set_login_warning(null)
-			set_user(true)
+		if(res.status === 200){
+			set_reg_warning(null)
+			await Login(username, password, false)
+			cfetch("user", "current", true).then(set_user)
 		}else{
-			set_login_warning(<div className="smol-warn">
-				<p>Authentication failed. Check your username and password and try again.</p>
-			</div>)
+			console.log(res)
+			let rjs = await res.json()
+			console.log(rjs)
+			if(rjs.reason === "Password found in breach database"){
+				let time_or_times = "time"
+				if(rjs.breaches > 1){
+					time_or_times = "times"
+				}
+				set_reg_warning(<div className="smol-warn">
+					<p>The password you chose was found on a list of breached passwords (found {rjs.breaches} {time_or_times}). Choose a different password, and if you use this password anywhere else, consider changing it.</p>
+				</div>)
+			}else{
+				set_reg_warning(<div className="smol-warn">
+					<p>Registration error: {rjs.reason}</p>
+				</div>)
+			}
 		}
-	}, [username, password, persist, btn_enabled])
+	}, [username, password, display_name, pronouns_option, pronouns_dps, pronouns_ips, pronouns_obj, pronouns_rfx, pronouns_sub, regcode, btn_enabled, email, cfetch])
 
 	if(user){
 		// Logged-in users don't need to register - redirect to main.
-		return <Redirect to="/"/>
+		return <Redirect to="/dashboard"/>
 	}
 
 	let regcode_line = <tr>
@@ -117,7 +174,7 @@ function RegisterView({cfetch, set_title}){
 		<div className="center-both-contents">
 			<h1>Welcome!</h1>
 			<h2>Please register below or <Link to='/login'>Log in</Link></h2>
-			{login_warning}
+			{reg_warning}
 			<table className="register-form std-form"><tbody>
 				<tr>
 					<td><input className="display-name" type="text" onChange={(event) => set_display_name(event.target.value)} placeholder="Display Name" /></td>
@@ -129,6 +186,9 @@ function RegisterView({cfetch, set_title}){
 					</select></td>
 				</tr>
 				{custom_pronouns}
+				<tr>
+					<td colSpan={2}><input className="email" type="text" onChange={(event) => set_email(event.target.value)} placeholder="Email" /></td>
+				</tr>
 				<tr>
 					<td colSpan={2}><input className="username" type="text" onChange={(event) => set_username(event.target.value)} placeholder="Username" /></td>
 				</tr>

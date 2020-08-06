@@ -26,6 +26,7 @@ import LandingPageView from './views/LandingPageView/LandingPageView'
 import CitizenVoicesView from './views/CitizenVoicesView/CitizenVoicesView'
 import LoginView from './views/LoginView/LoginView'
 import RegisterView from './views/RegisterView/RegisterView'
+import DashboardView from './views/DashboardView/DashboardView'
 
 async function fetch_value(type, id, force, cache, set_cache){
 	switch(type){
@@ -111,6 +112,12 @@ function App() {
 				</Route>
 				<Route path="/register">
 					<RegisterView 
+						cfetch={fetch_wrapper}
+						set_title={set_title}
+					/>
+				</Route>
+				<Route path="/dashboard">
+					<DashboardView 
 						cfetch={fetch_wrapper}
 						set_title={set_title}
 					/>

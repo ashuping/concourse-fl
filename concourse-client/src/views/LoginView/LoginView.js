@@ -70,7 +70,7 @@ function LoginView({cfetch, set_title}){
 
 	if(user){
 		// Logged-in users don't need to log in again - redirect to main.
-		return <Redirect to="/"/>
+		return <Redirect to="/dashboard"/>
 	}
 
 	const not_yet_implemented_persist = <div style={{display: 'none'}}>

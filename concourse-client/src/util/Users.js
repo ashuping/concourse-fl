@@ -44,17 +44,19 @@ async function Register(
 			username: username,
 			password: password,
 			display_name: display_name,
-			pronouns: pronouns,
+			pronouns: {
+				subject: pronouns.subject,
+				object: pronouns.object,
+				dependent_possessive: pronouns.dependent_possessive,
+				independent_possessive: pronouns.independent_possessive,
+				reflexive: pronouns.reflexive
+			},
 			email: email,
 			registration_key: registration_key
 		})
 	})
 
-	if(res.status === 200){
-		return res.json()
-	}else{
-		return null
-	}
+	return res
 }
 
 /**
@@ -93,4 +95,4 @@ async function GetUser(id){
 	}
 }
 
-export { GetCurrentUser, GetUser, GetRegistrationOptions }
+export { GetCurrentUser, GetUser, GetRegistrationOptions, Register }

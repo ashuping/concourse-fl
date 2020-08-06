@@ -25,7 +25,7 @@ import { UserProfileModel } from '../models/UserProfileSchema.js'
 import { RegistrationKeyModel } from '../models/RegistrationKeySchema.js'
 
 /* Checks a password against the HaveIBeenPwned breachlist. This is used to
- * to prevent users from using weak and/or breached passwords.
+ * prevent users from using weak and/or breached passwords.
  * 
  * Returns the number of breaches the hash has been found in (0 if none)
  */
@@ -141,28 +141,34 @@ export const GetRegistrationOptions = async (req, res, next) => {
  *   username: (String) username for the new user
  *   password: (String) password for the new user
  *   display_name: (String) display name to use for this user
- *   pronouns: (ObjectId) link to PreferredPronounsSchema representing this user's preferred pronouns
+ *   pronouns: (ObjectId) link to PreferredPronounsSchema representing this 
+ *             user's preferred pronouns
  *   email: (String) Primary e-mail to use for the new user
- *   registration_key: (String) The registration key to use for this registration.
- *                     NOTE that if the server does not require registration keys,
- *                     this field is optional.
+ *   registration_key: (String) The registration key to use for this
+ *                     registration. NOTE that if the server does not require 
+ *                     registration keys, this field is optional.
  * }
  * 
- * Returns 200 if the user was successfully created, 400 if some part of the input data is malformed,
- * 409 if the username requested is already taken, and 500 if an unexpected error occurs (this should
- * hopefully never happen).
- * 
- * If the status code is 200, it will return a JSON object representing the new user's profile - the
- * object will be as UserProfileSchema, with an added "_id" field representing the user's unique ID.
- * 
- * In case of a user problem (code 400/409), it will return a JSON object representing the problem.
- * This object will always contain a "reason" field representing the reason the user could not be
- * created. Certain specific error codes/reasons may have extra fields.
- * 
- * This function will verify that the password provided is not found in the Pwned Passwords database.
- * If the password *is* found, it will return 400, with reason "Password found in breach database".
- * The object returned will also contain a "breaches" key, representing the number of times the
- * password has been found in breaches.
+ * Returns 200 if the user was successfully created, 400 if some part of the
+ * input data is malformed, 401 if registration keys are required and the user
+ * did not provide one (or provided an invalid one), 409 if the username
+ * requested is already taken, and 500 if an unexpected error occurs (this
+ * should hopefully never happen).
+ *
+ * If the status code is 200, it will return a JSON object representing the new
+ * user's profile - the object will be as UserProfileSchema, with an added "_id"
+ * field representing the user's unique ID.
+ *
+ * In case of a user problem (code 400/409), it will return a JSON object
+ * representing the problem. This object will always contain a "reason" field
+ * representing the reason the user could not be created. Certain specific error
+ * codes/reasons may have extra fields.
+ *
+ * This function will verify that the password provided is not found in the
+ * Pwned Passwords database. If the password *is* found, it will return 400,
+ * with reason "Password found in breach database". The object returned will
+ * also contain a "breaches" key, representing the number of times the password
+ * has been found in breaches.
  */
 export const RegisterUser = async (req, res, next) => {
 	// Verify that all required fields exist
@@ -198,7 +204,7 @@ export const RegisterUser = async (req, res, next) => {
 			found_key = await RegistrationKeyModel.findOne({text: req.body.registration_key})
 
 			if(!(found_key && (found_key.uses_total < 0 || found_key.uses_remaining > 0))){
-				return res.status(400).json({
+				return res.status(401).json({
 					reason: "Invalid or expired registration key"
 				})
 			}
