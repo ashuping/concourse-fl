@@ -21,6 +21,7 @@ import passport from 'passport'
 import { TokenBlacklistModel } from '../models/TokenBlacklistSchema.js'
 
 import config from '../config/config.js'
+import { UserProfileModel } from '../models/UserProfileSchema.js'
 
 /* Attempts to authenticate a user.
  * 
@@ -33,8 +34,8 @@ import config from '../config/config.js'
  * authenticate to the application.
  * 
  * The following methods are available:
- *   > local: authenticate with a username and password
- *       The "username" and "password" fields should be included in requests
+ *   > local: authenticate with an email and password
+ *       The "email" and "password" fields should be included in requests
  *       using this method. To get a persistent session-cookie in addition to
  *       the short-term JWT, pass "persistent: true"
  *   > token: use an existing valid and unexpired JWT to retrieve a new token
@@ -57,12 +58,27 @@ export const Login = (req, res, next) => {
 	}
 	if(req.body.method == 'local'){
 		if(!(
-			req.body.username && req.body.password
+			req.body.email && req.body.password
 		)){
 			return res.status(400).json({
-				reason: "Malformed request: 'username' and 'password' are required"
+				reason: "Malformed request: 'email' and 'password' are required"
 			})
 		}
+		// console.log('About to look up user ID by email')
+		// const uid = UserProfileModel.findOne({email: [{ address: req.body.email, verified: true, primary: true }]})
+		// try{
+		// 	const uid = UserProfileModel.findOne({email: { address: req.body.email, verified: true, primary: true }})
+		// }catch(e){
+		// 	console.error(e)
+		// 	return res.sendStatus(500)
+		// }
+		// if(!uid){
+		// 	return res.status(401).json({
+		// 		reason: "Authentication failure."
+		// 	})
+		// }
+		// console.log('Looked up user ID by email')
+		// req.body.profile = uid._id
 		passport.authenticate('local', {session: false}, function(err, user, info){
 			if(req.body.persistent){
 				return res.status(501).json({
@@ -74,6 +90,8 @@ export const Login = (req, res, next) => {
 			}
 
 			if(!user){
+				console.log('Passport local authentication failed:')
+				console.log(info)
 				return res.status(401).json({
 					reason: "Authentication failure"
 				})

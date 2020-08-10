@@ -1,0 +1,15 @@
+.ifield td.ifield-tbox {
+    padding: 0 0.5em;
+}
+
+.ifield svg {
+    transition: all 0.2s;
+}
+
+.ifield-bad svg {
+    color: var(--bad-emphasized-item);
+}
+
+.ifield-good svg {
+    color: var(--good-emphasized-item);
+}

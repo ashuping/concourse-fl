@@ -29,7 +29,6 @@ async function GetRegistrationOptions(){
 async function Register(
 	username,
 	password,
-	display_name,
 	pronouns,
 	email,
 	registration_key
@@ -43,7 +42,6 @@ async function Register(
 		body: JSON.stringify({
 			username: username,
 			password: password,
-			display_name: display_name,
 			pronouns: {
 				subject: pronouns.subject,
 				object: pronouns.object,
@@ -85,7 +83,7 @@ async function GetCurrentUser(){
  */
 async function GetUser(id){
 	const user = await fetch(`${Backend()}/api/v1/users/i/${id}`, {
-		credentials: 'include'
+		credentials: 'same-origin'
 	})
 
 	if(user.status === 200){
@@ -95,4 +93,13 @@ async function GetUser(id){
 	}
 }
 
-export { GetCurrentUser, GetUser, GetRegistrationOptions, Register }
+async function ChangeIEX(){
+	const user = await fetch(`${Backend()}/api/v1/users/current/IEX`, {
+		method: 'POST',
+		credentials: 'same-origin'
+	})
+
+	return user
+}
+
+export { ChangeIEX, GetCurrentUser, GetUser, GetRegistrationOptions, Register }

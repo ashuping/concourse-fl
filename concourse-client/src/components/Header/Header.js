@@ -9,7 +9,7 @@ function Header({title}){
 		<table><tbody><tr>
 			<td><Link to="/dashboard"><Home /></Link></td>
 			<th>{title}</th>
-			<td><Link to="/login"><User /></Link></td>
+			<td><Link to="/profile"><User /></Link></td>
 		</tr></tbody></table>
 	</div>
 }

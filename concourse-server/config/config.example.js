@@ -80,6 +80,7 @@ export default {
 		// Value must be in ms.
 		token_lifetime: '300000' // AUTH_TKN_LIFETIME
 	},
+
     db: {
 		// Mongodb URI to connect to - see 
 		// https://docs.mongodb.com/manual/reference/connection-string/
@@ -92,5 +93,22 @@ export default {
 		// specified, it will default to the value specified in the connection
 		// URI, above.
 		db: 'database' // DB_DB
-    }
+	},
+	
+	email: {
+		// SMTP relay host to connect to
+		host: 'smtp.example.com', // EMAIL_HOST
+
+		// Port on which to connect to the SMTP relay
+		port: 587, // EMAIL_PORT
+
+		// Whether to require a secure (encrypted) SMTP connection
+		secure: true, // EMAIL_SECURE
+
+		// Username for the SMTP relay
+		username: 'example', // EMAIL_USERNAME
+
+		// Password for the SMTP relay
+		password: 'example' // EMAIL_PASSWORD
+	}
 }

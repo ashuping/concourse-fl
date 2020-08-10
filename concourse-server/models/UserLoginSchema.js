@@ -21,17 +21,20 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
 const userLoginSchema = new Schema({
-	username: {
-		type: String,
-		required: true,
-		unique: true
+	profile: {
+		type: ObjectId,
+		ref: 'UserProfile',
+		required: true
+	},
+	email: {
+		// The address used to log in. This should be the same as the address
+		// marked as "primary" in the user's profile.
+		type: ObjectId,
+		ref: 'Email',
+		required: true
 	},
 	password: {
 		type: String,
-		required: true
-	},
-	profile: {
-		type: ObjectId,
 		required: true
 	}
 })

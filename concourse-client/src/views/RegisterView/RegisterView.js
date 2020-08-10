@@ -15,12 +15,11 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
-
 import { Link, Redirect } from 'react-router-dom'
 
-import { Register } from '../../util/Users'
-
-import { Login } from '../../util/Auth'
+import IField from '../../components/IField/IField.js'
+import { Login } from '../../util/Auth.js'
+import { Register } from '../../util/Users.js'
 
 import bg from '../../assets/starry-sky-bg.svg'
 
@@ -50,6 +49,8 @@ const pronouns_he_him = {
 	"reflexive": "himself"
 }
 
+const mail_regex = /^(?=[A-Z0-9][A-Z0-9@._%+-]{5,253}$)[A-Z0-9._%+-]{1,64}@(?:(?=[A-Z0-9-]{1,63}\.)[A-Z0-9]+(?:-[A-Z0-9]+)*\.){1,8}[A-Z]{2,63}$/i
+
 function RegisterView({cfetch, set_title}){
 	const [user, set_user] = useState(null)
 	const [reg_warning, set_reg_warning] = useState(null)
@@ -57,7 +58,6 @@ function RegisterView({cfetch, set_title}){
 
 	const [username, set_username] = useState("")
 	const [password, set_password] = useState("")
-	const [display_name, set_display_name] = useState("")
 	const [pronouns_option, set_pronouns_option] = useState("they")
 	const [pronouns_sub, set_pronouns_sub] = useState("")
 	const [pronouns_obj, set_pronouns_obj] = useState("")
@@ -65,9 +65,12 @@ function RegisterView({cfetch, set_title}){
 	const [pronouns_ips, set_pronouns_ips] = useState("")
 	const [pronouns_rfx, set_pronouns_rfx] = useState("")
 	const [regcode, set_regcode] = useState("")
-	const [email, set_email] = useState("temp@coolbooks.biz")
+	const [email, set_email] = useState("")
+	const [mail_field_status, set_mail_field_status] = useState(true)
 
 	const [btn_enabled, set_btn_enabled] = useState(false)
+
+	const [reg_done, set_reg_done] = useState(false)
 
 	useEffect(() => {
 		set_title("New User Registration")
@@ -79,15 +82,20 @@ function RegisterView({cfetch, set_title}){
 	}, [cfetch])
 
 	useEffect(() => {
-		if(username && password && display_name
+		set_mail_field_status(mail_regex.test(email))
+	}, [email, set_mail_field_status])
+
+	useEffect(() => {
+		if(username && password
 			&& ((!regcode_required) || regcode)
+			&& email && mail_field_status
 			&& ((pronouns_option !== 'custom') || (pronouns_dps && pronouns_ips && pronouns_obj && pronouns_rfx && pronouns_sub))
 		){
 			set_btn_enabled(true)
 		}else{
 			set_btn_enabled(false)
 		}
-	}, [username, password, display_name, pronouns_option, pronouns_dps, pronouns_ips, pronouns_obj, pronouns_rfx, pronouns_sub, regcode, regcode_required])
+	}, [username, password, pronouns_option, pronouns_dps, pronouns_ips, pronouns_obj, pronouns_rfx, pronouns_sub, regcode, regcode_required, email, mail_field_status])
 
 	const on_register = useCallback(async () => {
 		if(!btn_enabled){return}
@@ -110,14 +118,13 @@ function RegisterView({cfetch, set_title}){
 
 		set_btn_enabled(false)
 		const res = await Register(
-			username, password, display_name, pronouns, email, regcode
+			username, password, pronouns, email, regcode
 		)
 		set_btn_enabled(true)
 
 		if(res.status === 200){
 			set_reg_warning(null)
-			await Login(username, password, false)
-			cfetch("user", "current", true).then(set_user)
+			set_reg_done(true)
 		}else{
 			console.log(res)
 			let rjs = await res.json()
@@ -136,14 +143,20 @@ function RegisterView({cfetch, set_title}){
 				</div>)
 			}
 		}
-	}, [username, password, display_name, pronouns_option, pronouns_dps, pronouns_ips, pronouns_obj, pronouns_rfx, pronouns_sub, regcode, btn_enabled, email, cfetch])
+	}, [username, password, pronouns_option, pronouns_dps, pronouns_ips, pronouns_obj, pronouns_rfx, pronouns_sub, regcode, btn_enabled, email])
 
 	if(user){
 		// Logged-in users don't need to register - redirect to main.
 		return <Redirect to="/dashboard"/>
 	}
 
+	if(reg_done){
+		// Once registration is complete, redirect to the login page
+		return <Redirect to="/login"/>
+	}
+
 	let regcode_line = <tr>
+		<td>RCode</td>
 		<td><input className="regcode" type="text" onChange={(event) => set_regcode(event.target.value)} placeholder="Registration Code" /></td>
 		<td><div className={btn_enabled ? "button" : "button button-disabled"} onClick={on_register}>Register</div></td>
 	</tr>
@@ -176,7 +189,7 @@ function RegisterView({cfetch, set_title}){
 			{reg_warning}
 			<table className="register-form std-form"><tbody>
 				<tr>
-					<td><input className="display-name" type="text" onChange={(event) => set_display_name(event.target.value)} placeholder="Display Name" /></td>
+					<td>Pronouns</td>
 					<td><select value={pronouns_option} onChange={(event) => {set_pronouns_option(event.target.value)}}>
 						<option value="she">She/Her</option>
 						<option value="he">He/Him</option>
@@ -185,15 +198,30 @@ function RegisterView({cfetch, set_title}){
 					</select></td>
 				</tr>
 				{custom_pronouns}
-				<tr>
-					<td colSpan={2}><input className="email" type="text" onChange={(event) => set_email(event.target.value)} placeholder="Email" /></td>
-				</tr>
-				<tr>
-					<td colSpan={2}><input className="username" type="text" onChange={(event) => set_username(event.target.value)} placeholder="Username" /></td>
-				</tr>
-				<tr>
-					<td colSpan={2}><input className="password" type="password" onChange={(event) => set_password(event.target.value)} placeholder="Password" /></td>
-				</tr>
+				<IField
+					changeCallback={(event) => set_email(event.target.value)}
+					good={mail_field_status || !email}
+					name="Email"
+					help_text="Please enter a valid e-mail address. This will not be shared with other users."
+					good_text=""
+					bad_text="This doesn't look like a valid e-mail address."
+				/>
+				<IField
+					changeCallback={(event) => set_username(event.target.value)}
+					good={true}
+					name="Username"
+					help_text="Choose a username."
+					good_text=""
+					bad_text=""
+				/>
+				<IField
+					changeCallback={(event) => set_password(event.target.value)}
+					good={true}
+					name="Password"
+					help_text="Choose a password."
+					good_text=""
+					bad_text=""
+				/>
 				{regcode_line}
 			</tbody></table>
 			

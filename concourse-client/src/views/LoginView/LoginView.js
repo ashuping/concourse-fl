@@ -28,7 +28,7 @@ function LoginView({cfetch, set_title}){
 	const [user, set_user] = useState(null)
 	const [login_warning, set_login_warning] = useState(null)
 
-	const [username, set_username] = useState("")
+	const [email, set_email] = useState("")
 	const [password, set_password] = useState("")
 	const [persist, set_persist] = useState(false)
 
@@ -43,18 +43,18 @@ function LoginView({cfetch, set_title}){
 	}, [cfetch])
 
 	useEffect(() => {
-		if(username && password){
+		if(email && password){
 			set_btn_enabled(true)
 		}else{
 			set_btn_enabled(false)
 		}
-	}, [username, password])
+	}, [email, password])
 
 	const on_login = useCallback(async () => {
 		if(!btn_enabled){return}
 
 		set_btn_enabled(false)
-		const res = await Login(username, password, persist)
+		const res = await Login(email, password, persist)
 		set_btn_enabled(true)
 
 		if(res.success){
@@ -62,11 +62,11 @@ function LoginView({cfetch, set_title}){
 			set_user(true)
 		}else{
 			set_login_warning(<div className="smol-warn">
-				<p>Authentication failed. Check your username and password and try again.</p>
+				<p>Authentication failed. Check your email and password and try again.</p>
 			</div>)
 		}
-		console.log(`Username: ${username} Password: ${password} Persist: ${persist}`)
-	}, [username, password, persist, btn_enabled])
+		console.log(`Email: ${email} Password: ${password} Persist: ${persist}`)
+	}, [email, password, persist, btn_enabled])
 
 	if(user){
 		// Logged-in users don't need to log in again - redirect to main.
@@ -88,7 +88,7 @@ function LoginView({cfetch, set_title}){
 			<h2>Please log in below or <Link to='/register'>Create an Account</Link></h2>
 			{login_warning}
 			<div className="login-form std-form">
-				<input className="username" type="text" onChange={(event) => set_username(event.target.value)} placeholder="Username" />
+				<input className="email" type="text" onChange={(event) => set_email(event.target.value)} placeholder="Email Address" />
 				<input className="password" type="password" onChange={(event) => set_password(event.target.value)} placeholder="Password" />
 				{not_yet_implemented_persist}
 			</div>

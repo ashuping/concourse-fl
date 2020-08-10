@@ -19,7 +19,7 @@ import { Backend } from './Connect'
 /**
  * Retrieves a new token from the backend
  * 
- * @param {string} username the username to authenticate with
+ * @param {string} email the email to authenticate with
  * @param {string} password the password to authenticate with
  * @param {Boolean} persist_session whether to retrieve a persistent session token as well as the temporary token
  * 
@@ -27,7 +27,7 @@ import { Backend } from './Connect'
  * Additionally, a JSON object containing information on the newly-
  * authenticated user and the token ID (for later invalidation)
  */
-async function Login(username, password, persist_session){
+async function Login(email, password, persist_session){
     if(persist_session){
         console.error("Persistent sessions are not yet implemented. This option will be ignored.")
     }
@@ -39,7 +39,7 @@ async function Login(username, password, persist_session){
         },
         body: JSON.stringify({
             method: 'local',
-            username: username,
+            email: email,
             password: password
         })
     })
@@ -64,4 +64,18 @@ async function RefreshLogin(){
     }))
 }
 
-export { Login, RefreshLogin }
+async function Logout(){
+    return (await fetch(`${Backend()}/api/v1/login`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            id: 'all'
+        })
+    }))
+}
+
+export { Login, Logout, RefreshLogin }

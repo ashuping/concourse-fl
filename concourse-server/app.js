@@ -14,11 +14,11 @@
 	limitations under the License.
  */
 
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import createError from 'http-errors'
 import crypto from 'crypto'
 import express from 'express'
-import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import mongoose from 'mongoose'
 
@@ -27,12 +27,16 @@ import config from './config/config.js'
 import citizen_voice_router from './routes/CitizenVoiceRoutes.js'
 import authenticaion_router from './routes/AuthenticationRoutes.js'
 import user_router from './routes/UserRoutes.js'
+import campaign_router from './routes/CampaignRoutes.js'
 
 import { UserLoginModel } from './models/UserLoginSchema.js'
 import { UserProfileModel } from './models/UserProfileSchema.js'
 import { RegistrationKeyModel } from './models/RegistrationKeySchema.js'
 
+import { send_mail, setup } from './controllers/MailController.js'
+
 import './passport.js'
+import { EmailModel } from './models/EmailSchema.js'
 
 var app = express()
 
@@ -59,6 +63,23 @@ function __promisified_crypto_random_bytes(count){
 	})
 }
 
+// [TEMP] - set up e-mail
+setup(
+	process.env.EMAIL_HOST || config.email.host,
+	process.env.EMAIL_PORT || config.email.port,
+	process.env.EMAIL_SECURE || config.email.secure,
+	process.env.EMAIL_USERNAME || config.email.username,
+	process.env.password || config.email.password
+).then(() => {
+	// send_mail({
+	// 	from: '"Concourse" <no-reply@concourse.city>',
+	// 	to: '"Core Logging Node" <logging@concourse.city>',
+	// 	subject: 'Server started',
+	// 	text: 'server started',
+	// 	html: '<blink><marquee><h1>server started</h1></marquee></blink>'
+	// })
+})
+
 // Add initial login token if no users are present on startup
 async function initial_run_check(){
 
@@ -68,6 +89,7 @@ async function initial_run_check(){
 		const root_user_password = (await __promisified_crypto_random_bytes(256)).toString('hex')
 		const root_user_profile = new UserProfileModel({
 			username: "root",
+			iex: "Great Regal Adorable CloudDragon",
 			display_name: "System",
 			pronouns: {
 				subject: "it",
@@ -76,21 +98,27 @@ async function initial_run_check(){
 				independent_possessive: "its",
 				reflexive: "itself"
 			},
-			emails: [{
-				address: "root@concourse.city",
-				verified: true,
-				primary: true
-			}],
+			emails: [],
 			administrator: true,
 			can_create_campaigns: true,
 			can_create_registration_keys: true,
 			campaigns: []
 		})
 
+		const root_user_email = new EmailModel({
+			address: "root@concourse.city",
+			verified: true,
+			primary: true,
+			user: root_user_profile._id
+		})
+
+		root_user_profile.emails = [root_user_email._id]
+
 		await root_user_profile.save()
+		await root_user_email.save()
 
 		const root_user_login = new UserLoginModel({
-			username: "root",
+			email: root_user_email._id,
 			password: root_user_password,
 			profile: root_user_profile._id
 		})
@@ -148,6 +176,7 @@ app.use(cookieParser());
 app.use('/api/v1/voices', citizen_voice_router)
 app.use('/api/v1/login', authenticaion_router)
 app.use('/api/v1/users', user_router)
+app.use('/api/v1/campaigns', campaign_router)
 app.use(express.static(process.env.CLIENT_FILES_PATH || config.client_files_path))
 
 // catch 404 and forward to error handler

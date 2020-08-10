@@ -20,12 +20,12 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
 const userProfileSchema = new Schema({
+	// NOTE: The concatenation `username`+`iex` must be unique.
 	username: {
 		type: String,
-		required: true,
-		unique: true
+		required: true
 	},
-	display_name: {
+	iex: { // (ID extension)
 		type: String,
 		required: true
 	},
@@ -52,18 +52,8 @@ const userProfileSchema = new Schema({
 		}
 	},
 	emails: [{
-		address: {
-			type: String,
-			required: true
-		},
-		verified: {
-			type: Boolean,
-			required: true
-		},
-		primary: {
-			type: Boolean,
-			required: true
-		}
+		type: ObjectId,
+		ref: 'Email'
 	}],
 	administrator: {
 		type: Boolean,
@@ -76,17 +66,7 @@ const userProfileSchema = new Schema({
 	can_create_registration_keys: {
 		type: Boolean,
 		required: true
-	},
-	campaigns: [{
-		id: {
-			type: ObjectId,
-			required: true
-		},
-		admin: {
-			type: Boolean,
-			required: true
-		}
-	}]
+	}
 })
 
 export const UserProfileModel = mongoose.model('UserProfile', userProfileSchema)

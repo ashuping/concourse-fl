@@ -1,4 +1,4 @@
-/* City of Concourse Website - User utilities
+/* City of Concourse Website - User dashboard
 	Copyright 2019, 2020 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,53 @@
  */
 
 import React, { useState, useEffect } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
+import './DashboardView.css'
 
-function DashboardView({cfetch, set_title}){
+import CampaignDetail from '../../components/CampaignDetail/CampaignDetail.js'
+import CampaignList from '../../components/CampaignList/CampaignList.js'
+import UserProfile from '../../components/UserProfile/UserProfile.js'
+
+const dbTabs = {
+    CAMPAIGNS: {
+        obj: (cfetch, set_title, props) => <CampaignList />
+    },
+    PROFILE: {
+        obj: (cfetch, set_title, props) => <UserProfile cfetch={cfetch} />
+    },
+    ADMIN: {
+        obj: (cfetch, set_title, props) => <div><blink><marquee><h1 className="spin">under construction</h1></marquee></blink></div>
+    },
+    CAMPAIGN_DETAIL: {
+        obj: (cfetch, set_title, props) => {
+            if(props){
+                return <CampaignDetail campaign_id={props.match.params.cid} />
+            }else{
+                return null
+            }
+        }
+    }
+}
+
+function DashboardView({cfetch, set_title, active_tab, props}){
     const [user, set_user] = useState(null)
     const [user_loaded, set_user_loaded] = useState(false)
+    const [mode, set_mode] = useState(dbTabs.CAMPAIGNS)
+
+    useEffect(() => {
+        if(active_tab === "campaigns"){
+            set_mode(dbTabs.CAMPAIGNS)
+        }else if(active_tab === "profile"){
+            set_mode(dbTabs.PROFILE)
+        }else if(active_tab === "admin"){
+            set_mode(dbTabs.ADMIN)
+        }else if(active_tab === "campaign_detail"){
+            console.log(`CID is ${props.match.params.cid} (props: ${JSON.stringify(props)})`)
+            set_mode(dbTabs.CAMPAIGN_DETAIL)
+        }else{
+            set_mode(dbTabs.CAMPAIGNS)
+        }
+    }, [active_tab, set_mode])
 
 	useEffect(() => {
 		set_title("Dashboard")
@@ -27,6 +69,7 @@ function DashboardView({cfetch, set_title}){
 
 	useEffect(() => {
 		cfetch("user", "current", false).then((user) => {
+            console.log('User: ' + user)
             set_user(user)
             set_user_loaded(true)
         })
@@ -44,7 +87,15 @@ function DashboardView({cfetch, set_title}){
     }
 
     return <div className="dashboard">
-        <h1>Welcome, {user.display_name}!</h1>
+        <h1 className="title">{user.username} <span className="title-small">the {user.iex}</span></h1>
+        <div className="db-body">
+            <div className="db-tabs-row">
+                <div><Link to="/dashboard">Campaigns</Link></div>
+                <div><Link to="/profile">Profile</Link></div>
+                <div><Link to="/admin">Administrator Tools</Link></div>
+            </div>
+            {mode.obj(cfetch, set_title, props)}
+        </div>
     </div>
 
 }

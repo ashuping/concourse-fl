@@ -18,6 +18,7 @@ import passport from 'passport'
 import pl from 'passport-local'
 import jwt from 'passport-jwt'
 
+import { EmailModel } from './models/EmailSchema.js'
 import { UserLoginModel } from './models/UserLoginSchema.js'
 import { UserProfileModel } from './models/UserProfileSchema.js'
 import { TokenBlacklistModel } from './models/TokenBlacklistSchema.js'
@@ -34,17 +35,20 @@ function __promisified_bcrypt_compare(password, hash){
 }
 
 passport.use(new pl.Strategy({
-		usernameField: "username",
+		usernameField: "email",
 		passwordField: "password"
 	}, async function(username, password, callback){
 		const auth_fail_message = 'Authentication failure'
 
-		if(username === 'root'){
+		if(username === 'root@concourse.city'){
 			// It should never be possible to login as the root user.
+			console.warn('Attempt to log in as root user')
 			return callback(null, false, {message: auth_fail_message})
 		}
 
-		const found_user = await UserLoginModel.findOne({username})
+		const email = await EmailModel.findOne({address: username})
+
+		const found_user = await UserLoginModel.findOne({email: email._id})
 		if(!found_user){
 			return callback(null, false, {message: auth_fail_message})
 		}

@@ -14,7 +14,7 @@
 	limitations under the License.
  */
 
-import crypto from 'crypto'
+import crypto, { verify } from 'crypto'
 import fetch from 'node-fetch'
 import mongodb from 'mongodb'
 
@@ -22,7 +22,13 @@ import config from '../config/config.js'
 
 import { UserLoginModel } from '../models/UserLoginSchema.js'
 import { UserProfileModel } from '../models/UserProfileSchema.js'
+import { EmailModel } from '../models/EmailSchema.js'
 import { RegistrationKeyModel } from '../models/RegistrationKeySchema.js'
+
+import { gen_IEX } from './XIDController.js'
+import { send_verification_email, check_verification_email } from './MailController.js'
+
+const mail_regex = /^(?=[A-Z0-9][A-Z0-9@._%+-]{5,253}$)[A-Z0-9._%+-]{1,64}@(?:(?=[A-Z0-9-]{1,63}\.)[A-Z0-9]+(?:-[A-Z0-9]+)*\.){1,8}[A-Z]{2,63}$/i
 
 /* Checks a password against the HaveIBeenPwned breachlist. This is used to
  * prevent users from using weak and/or breached passwords.
@@ -140,7 +146,6 @@ export const GetRegistrationOptions = async (req, res, next) => {
  *   [Required fields]
  *   username: (String) username for the new user
  *   password: (String) password for the new user
- *   display_name: (String) display name to use for this user
  *   pronouns: (ObjectId) link to PreferredPronounsSchema representing this 
  *             user's preferred pronouns
  *   email: (String) Primary e-mail to use for the new user
@@ -175,7 +180,6 @@ export const RegisterUser = async (req, res, next) => {
 	if(!(
 		req.body.username
 		&& req.body.password
-		&& req.body.display_name
 		&& req.body.pronouns
 		&& req.body.pronouns.subject
 		&& req.body.pronouns.object
@@ -216,13 +220,68 @@ export const RegisterUser = async (req, res, next) => {
 		}
 	}
 
-	// Check that no existing users have this password
-	const existing = await UserLoginModel.findOne({username: req.body.username})
-	if(existing){
-		return res.status(409).json({
-			reason: "Username already taken"
+	// Disallow the use of certain usernames
+	const username_blacklist = [
+		"root",
+		"system",
+		"admin",
+		"administrator",
+		"webmaster",
+		"syadmin"
+	]
+
+	// Ensure that usernames only contain letters, numbers, and _.-
+	const acceptable_username_regex = /^[a-zA-Z0-9_.-]+$/
+
+	// Check validity of username
+	const good_uname = acceptable_username_regex.test(req.body.username)
+	if(!good_uname){
+		return res.status(400).json({
+			reason: "Username contains unacceptable characters."
 		})
 	}
+
+	let uname_blacklisted = false
+
+	username_blacklist.forEach((item, index) => {
+		if(req.body.username.toLowerCase() === item){
+			uname_blacklisted = true
+		}
+	})
+
+	if(uname_blacklisted){
+		return res.status(400).json({
+			reason: "Username has been blacklisted."
+		})
+	}
+
+	// Check that the email is plausible
+	if(!mail_regex.test(req.body.email)){
+		return res.status(400).json({
+			reason: "Email address is not syntactically valid."
+		})
+	}
+
+	// Ensure that the e-mail address is not already in use
+	const email_duplicate = await EmailModel.findOne({address: req.body.email, verified: true})
+	if(email_duplicate){
+		return res.status(400).json({
+			reason: "Email address is already in use."
+		})
+	}
+
+	// Generate an ID extension for this user and ensure that the extended ID
+	// (i.e. username + ID extension) is unique
+	let xid_entry = null
+	let user_IEX = ''
+
+	do{
+		user_IEX = gen_IEX()
+		console.log('Generated IEX ' + user_IEX)
+
+		xid_entry = await UserProfileModel.findOne({"username": req.body.username, "iex": user_IEX})
+		console.log(xid_entry)
+	}while(xid_entry)
 
 	// Check that the password is not in a breach database
 	const passwd_pwn_count = await has_been_pwned(req.body.password)
@@ -233,10 +292,10 @@ export const RegisterUser = async (req, res, next) => {
 		})
 	}
 
-	// Save profile object first, so that it can be linked to the login object
+	// Create profile object first, so that it can be linked to the login object
 	const user_profile = new UserProfileModel({
 		username: req.body.username,
-		display_name: req.body.display_name,
+		iex: user_IEX,
 		pronouns: {
 			subject: req.body.pronouns.subject,
 			object: req.body.pronouns.object,
@@ -244,24 +303,32 @@ export const RegisterUser = async (req, res, next) => {
 			independent_possessive: req.body.pronouns.independent_possessive,
 			reflexive: req.body.pronouns.reflexive
 		},
-		emails: [{
-			address: req.body.email,
-			verified: false,
-			primary: true
-		}],
+		emails: [],
 		administrator: make_admin,
 		can_create_campaigns: let_create_campaigns,
 		can_create_registration_keys: let_create_registration_keys,
 		campaigns: set_campaigns
 	})
 
+	// Then, create the email object for the primary email
+	const user_email = new EmailModel({
+		address: req.body.email,
+		verified: false,
+		primary: true,
+		user: user_profile._id
+	})
+
+	// Insert the email object into the user profile
+	user_profile.emails = [user_email._id]
+
 	await user_profile.save()
+	await user_email.save()
 
 	// Then, save login object with a link to the profile
 	const user_login = new UserLoginModel({
-		username: req.body.username,
+		profile: user_profile._id,
 		password: req.body.password,
-		profile: user_profile._id
+		email: user_email._id
 	})
 
 	await user_login.save()
@@ -275,8 +342,64 @@ export const RegisterUser = async (req, res, next) => {
 		}
 	}
 
+	// Send verification e-mail
+	send_verification_email(user_profile._id, req.body.email)
+
 	// Return the profile object
 	return res.status(200).json(user_profile)
+}
+
+export const DoVerify = async (req, res, next) => {
+	try{
+		const verify_result = await check_verification_email(req.params.id)
+		if(!verify_result){
+			return res.sendStatus(404)
+		}
+
+		const email = await EmailModel.findOne({
+			address: verify_result.address,
+			user: verify_result.uid
+		})
+
+		if(!email){
+			return res.sendStatus(404)
+		}else{
+			return res.sendStatus(200)
+		}
+	}catch(err){
+		console.error(err)
+		return res.sendStatus(400)
+	}
+}
+
+export const ChangeIEX = async (req, res, next) => {
+	/* istanbul ignore if */
+	if(!req.user){
+		return res.sendStatus(500)
+	}
+
+	const found_user = await UserProfileModel.findById(req.user.user._id)
+
+	/* istanbul ignore if */
+	if(!found_user){
+		return res.sendStatus(500)
+	}
+
+	// Generate an ID extension for this user and ensure that the extended ID
+	// (i.e. username + ID extension) is unique
+	let xid_entry = null
+	let user_IEX = ''
+
+	do{
+		user_IEX = gen_IEX()
+
+		xid_entry = await UserProfileModel.findOne({"username": found_user.username, "iex": user_IEX})
+	}while(xid_entry)
+
+	found_user.iex = user_IEX
+	await found_user.save()
+
+	return res.status(200).json(found_user)
 }
 
 export const GetCurrentUser = async (req, res, next) => {

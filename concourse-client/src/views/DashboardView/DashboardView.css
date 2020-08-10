@@ -1,0 +1,63 @@
+.dashboard h1.title {
+    margin: 0 0 0 0.5em;
+    padding: 0.5em 1em 0.1em 0.5em;
+    flex: 0 1 auto;
+    width: max-content;
+    border-bottom: 2px solid #444;
+    font-variant: small-caps;
+}
+
+.dashboard span.title-small {
+    font-size: medium;
+    /* margin-left: 0.5em; */
+}
+
+.dashboard {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.dashboard .db-body {
+    margin: 1em;
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.dashboard .db-tabs-row {
+    display: flex;
+    flex-flow: row;
+    flex: 0 1 auto;
+    width: 100%;
+}
+.dashboard .db-tabs-row div {
+    margin: 0 0.5em 0.5em 0.5em;
+    font-variant: small-caps;
+    border-bottom: 2px solid var(--link-hover);
+    transition: all 0.1s;
+    cursor: pointer;
+}
+
+.dashboard .db-tabs-row div:hover {
+    border-bottom-color: var(--link-text);
+}
+
+.dashboard .db-tabs-row div {
+    flex: 0 1 auto;
+}
+
+@keyframes rainbowspin {
+    0%   {color:red; transform: rotate(0deg);}
+    25%  {color:purple; transform: rotate(90deg);}
+    50%  {color:blue; transform: rotate(180deg);}
+    75%  {color:green; transform: rotate(270deg);}
+    100% {color:red; transform: rotate(360deg);}
+}
+
+marquee h1.spin {
+    animation: rainbowspin 10s linear 0s infinite;
+    height: 10em;
+}

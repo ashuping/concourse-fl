@@ -63,6 +63,7 @@ before(async function(){
 
 	const new_user_profile = new UserProfileModel({
 		username: "lyra",
+		iex: "Confusing Mysterious TestingUser",
 		display_name: "Lyra [TESTING USER - DELETE IF IN PRODUCTION]",
 		pronouns: {
 			"subject": "they",
@@ -109,6 +110,7 @@ before(async function(){
 
 	const new_user_profile_2 = new UserProfileModel({
 		username: "lyra-2",
+		iex: "Confusing Second TestingUser",
 		display_name: "Lyra-2 [TESTING USER - DELETE IF IN PRODUCTION]",
 		pronouns: {
 			"subject": "they",
@@ -160,6 +162,7 @@ export function validate_user_object(user, alternate){
 		expect(user._id).to.exist
 		expect(user.username).to.equal('lyra-2')
 		expect(user.display_name).to.equal('Lyra-2 [TESTING USER - DELETE IF IN PRODUCTION]')
+		expect(user.iex).to.equal('Confusing Mysterious TestingUser')
 		expect(user.pronouns).to.deep.equal({
 			"subject": "they",
 			"object": "them",
@@ -182,6 +185,7 @@ export function validate_user_object(user, alternate){
 		expect(user).to.exist
 		expect(user._id).to.exist
 		expect(user.username).to.equal('lyra')
+		expect(user.iex).to.equal('Confusing Second TestingUser')
 		expect(user.display_name).to.equal('Lyra [TESTING USER - DELETE IF IN PRODUCTION]')
 		expect(user.pronouns).to.deep.equal({
 			"subject": "they",
@@ -193,7 +197,7 @@ export function validate_user_object(user, alternate){
 		expect(user.emails).to.exist
 		expect(user.emails).to.have.length(1)
 		expect(user.emails[0]).to.exist
-		expect(user.emails[0].address).to.equal('lyra@coolbooks.biz')
+		expect(user.emails[0].address).to.equal('lyra2@coolbooks.biz')
 		expect(user.emails[0].verified).to.be.true
 		expect(user.emails[0].primary).to.be.true
 		expect(user.administrator).to.be.true

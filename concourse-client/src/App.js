@@ -120,8 +120,34 @@ function App() {
 					<DashboardView 
 						cfetch={fetch_wrapper}
 						set_title={set_title}
+						active_tab="campaigns"
+						props={null}
 					/>
 				</Route>
+				<Route path="/profile">
+					<DashboardView
+						cfetch={fetch_wrapper}
+						set_title={set_title}
+						active_tab="profile"
+						props={null}
+					/>
+				</Route>
+				<Route path="/admin">
+					<DashboardView 
+						cfetch={fetch_wrapper}
+						set_title={set_title}
+						active_tab="admin"
+						props={null}
+					/>
+				</Route>
+				<Route exact path="/campaigns/:cid" 
+					render={props => <DashboardView 
+						cfetch={fetch_wrapper}
+						set_title={set_title}
+						active_tab="campaign_detail"
+						props={props}
+					/>}
+				/>
 			</Switch>
 		</Router>
 	);

@@ -1,4 +1,4 @@
-/* City of Concourse Website - User Management Routes
+/* City of Concourse Website - Campaign Routes
 	Copyright 2019 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +15,14 @@
  */
 
 import express from 'express'
-import passport from 'passport'
 const Router = express.Router()
 
-import { RegisterUser, GetCurrentUser, GetRegistrationOptions, DoVerify, ChangeIEX } from '../controllers/UserController.js'
+import passport from 'passport'
 
-Router.post('/create', RegisterUser)
-Router.get('/create', GetRegistrationOptions)
-Router.get('/current', passport.authenticate('jwt', {session: false}), GetCurrentUser)
-Router.post('/current/IEX', passport.authenticate('jwt', {session: false}), ChangeIEX)
-Router.get('/verify/:id', DoVerify)
+// import { Login, Logout } from '../controllers/AuthenticationController.js'
+import { CreateCampaign, RetrieveAllCampaigns } from '../controllers/CampaignController.js'
+
+Router.get('/', passport.authenticate('jwt', {session: false}), RetrieveAllCampaigns)
+Router.post('/new', passport.authenticate('jwt', {session: false}), CreateCampaign)
 
 export default Router

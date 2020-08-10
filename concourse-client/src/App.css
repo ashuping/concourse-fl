@@ -22,6 +22,7 @@
 	--fg-light: #CCDBDC;
 	--fg-grey: #AABBBB;
 	--dark-grey: #777080;
+	--darker-grey: #444050;
 	--prime-green: #63C7B2;
 	--dark-green: #037762;
 	--prime-blue: #80CED7;
@@ -43,17 +44,28 @@
 	--link-text: var(--prime-blue);
 	--link-hover: var(--light-violet);
 
+	--default-border: var(--prime-green);
+
+	--de-emphasized-text: var(--fg-grey);
+	--bad-emphasized-item: var(--prime-red);
+	--good-emphasized-item: var(--dark-green);
+	--offline-emphasized-item-bg: var(--darker-grey);
+	--offline-emphasized-item-fg: var(--fg-grey);
+	--online-emphasized-item-bg: var(--prime-green);
+	--online-emphasized-item-fg: var(--dark-green);
+
 	--text-input-bg: rgba(var(--very-dark-rgba), 0.4);
-	--text-input-border: var(--prime-green);
+	--text-input-border: var(--default-border);
 	--text-input-border-bad: var(--prime-red);
+	--text-input-border-good: var(--default-border);
 	--text-input-text: var(--defaul-text);
 
 	--button-normal-bg: var(--dark-violet);
 	--button-normal-border: var(--prime-violet);
 	--button-hover-bg: var(--button-normal-border);
 	--button-hover-border: var(--button-normal-border);
-	--button-green-bg: var(--dark-green);
-	--button-green-border: var(--prime-green);
+	--button-green-bg: var(--button-normal-bg);
+	--button-green-border: var(--dark-green);
 	--button-green-hover-bg: var(--button-green-border);
 	--button-green-hover-border: var(--button-green-border);
 	--button-red-bg: var(--dark-red);
@@ -62,6 +74,19 @@
 	--button-red-hover-border: var(--button-red-border);
 	--button-disabled-bg: var(--dark-grey);
 	--button-disabled-border: var(--fg-light);
+}
+
+html, body {
+	margin: 0;
+	height: calc( 100% - 1.25em );
+}
+
+svg {
+	vertical-align: middle;
+}
+
+#root {
+	height: 100%;
 }
 
 body{
@@ -104,6 +129,10 @@ a:hover{
 	width: 0;
 	text-align: center;
 	padding: 0 1em;
+}
+
+.header th{
+	font-variant: small-caps;
 }
 
 .header td a{

@@ -1,0 +1,7 @@
+.prof-container {
+    border: 1px solid var(--default-border);
+    overflow-y: hidden;
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+}
