@@ -30,4 +30,32 @@ function IField({changeCallback, name, help_text, good_text, bad_text, good}){
 	</tr>
 }
 
+export function IField_Flexbox({changeCallback, name, help_text, good_text, bad_text, good}){
+	const [empty, set_empty] = useState(true)
+
+	function changeCBWrapper(event){
+		if(event.target.value){
+			set_empty(false)
+		}else{
+			set_empty(true)
+		}
+
+		changeCallback(event)
+	}
+
+	let status_elem = <div className="ifield-right"><span className="ifield-empty" title="Field is empty"><Circle /></span></div>
+	if(!empty){
+		status_elem = <div className="ifield-right"><span className="ifield-good" title={good_text}><CheckCircle /></span></div>
+	}
+	if(!good){
+		status_elem = <div className="ifield-right"><span className="ifield-bad" title={bad_text}><AlertCircle /></span></div>
+	}
+
+	return <div className="ifield">
+		<div className="ifield-left"><span title={help_text}>{name}</span></div>
+		<div className="ifield-center"><input type="text" onChange={changeCBWrapper} placeholder={help_text} /></div>
+		{status_elem}
+	</div>
+}
+
 export default IField

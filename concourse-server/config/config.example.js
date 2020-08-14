@@ -30,6 +30,9 @@ export default {
 	client_files_path: 'concourse-client/build', // CLIENT_FILES_PATH
 
 	registration: {
+		// Determines the minimum length required for a user-created invite key.
+		invite_min_length: 32, // REGISTRATION_INVITE_MIN_LENGTH
+		
 		// Set to true to require a key to be entered before a user can register
 		keys_required: true, // REGISTRATION_KEYS_REQUIRED
 

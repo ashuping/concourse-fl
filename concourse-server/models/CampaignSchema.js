@@ -55,6 +55,11 @@ const campaignMemberSchema = new Schema({
         ref: 'UserProfile',
         required: true
     },
+    campaign: {
+        type: ObjectId,
+        ref: 'Campaign',
+        required: true
+    },
     roles: {
         type: [{type: ObjectId, ref: 'CampaignRole'}],
         required: true
@@ -77,6 +82,10 @@ const campaignSchema = new Schema({
     },
     members: {
         type: [{type: ObjectId, ref: 'CampaignMember'}],
+        required: true
+    },
+    roles: {
+        type: [{type: ObjectId, ref: 'CampaignRole'}],
         required: true
     }
 })

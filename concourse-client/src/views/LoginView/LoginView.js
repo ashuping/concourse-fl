@@ -65,7 +65,6 @@ function LoginView({cfetch, set_title}){
 				<p>Authentication failed. Check your email and password and try again.</p>
 			</div>)
 		}
-		console.log(`Email: ${email} Password: ${password} Persist: ${persist}`)
 	}, [email, password, persist, btn_enabled])
 
 	if(user){

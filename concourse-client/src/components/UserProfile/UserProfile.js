@@ -15,7 +15,6 @@
  */
 
 import React from 'react'
-import { PlusSquare } from 'react-feather'
 
 import { ChangeIEX } from '../../util/Users.js'
 import { Logout } from '../../util/Auth.js'

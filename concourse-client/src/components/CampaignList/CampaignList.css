@@ -9,15 +9,27 @@
 .campaign-new {
     padding: 1em;
     background-color: var(--dark-green);
-    cursor: pointer;
+    color: var(--fg-color);
+    transition: all 0.2s;
+}
+
+.campaign-new:hover {
+    color: var(--fg-color);
 }
 
 .campaign-new svg {
     vertical-align: middle;
+    transition: all 0.2s;
+}
+
+.campaign-new:hover svg {
+    stroke-width: 0.2em;
+    color: var(--online-emphasized-item-bg);
 }
 
 .campaign-new span {
     margin-left: 1em;
+    padding: auto;
 }
 
 .campaign-list-inner {

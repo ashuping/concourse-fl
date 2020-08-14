@@ -1,0 +1,42 @@
+.sb-container {
+    flex: 1 1 auto;
+    display: flex;
+    width: max-content;
+    margin: auto;
+}
+
+.sb-container .sb-button {
+    flex: 1 1 auto;
+}
+
+.sb-container .sb-button span {
+    margin: auto;
+}
+
+.sb-container svg {
+    flex: 0 1 auto;
+    margin: auto 0 auto 1em;
+}
+
+@keyframes working {
+    0%   {color:pink; transform: rotate(0deg);}
+    25%  {color:magenta; transform: rotate(90deg);}
+    50%  {color:skyblue; transform: rotate(180deg);}
+    75%  {color:green; transform: rotate(270deg);}
+    100% {color:pink; transform: rotate(360deg);}
+}
+
+.sb-working .sb-button svg{
+    animation: working 2s linear 0s infinite;
+}
+
+.sb-disabled .sb-button {
+	background-color: var(--button-disabled-bg);
+	border: 2px solid var(--button-disabled-border);
+	cursor: not-allowed;
+}
+
+.sb-disabled .sb-button:hover {
+	background-color: var(--button-disabled-bg);
+	border-color: var(--button-disabled-border);
+}

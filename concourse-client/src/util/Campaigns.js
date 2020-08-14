@@ -28,3 +28,55 @@ export async function GetCampaigns(){
     }
     
 }
+
+export async function CreateCampaign(
+	name,
+	description
+){
+	const res = await fetch(`${Backend()}/api/v1/campaigns/new`, {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		credentials: 'same-origin',
+		body: JSON.stringify({
+			name: name,
+			description: description
+		})
+	})
+
+	return res
+}
+
+export async function GenCampaignInvite(
+	text,
+	campaign_id,
+	campaign_roles,
+	uses,
+	grants_administrator,
+	grants_create_campaigns,
+	grants_create_registration_keys
+){
+	const res = await fetch(`${Backend()}/api/v1/invites`, {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		credentials: 'same-origin',
+		body: JSON.stringify({
+			campaign: {
+				cid: campaign_id,
+				roles: campaign_roles
+			},
+			text: text,
+			uses: uses,
+			grants_administrator: grants_administrator,
+			grants_create_campaigns: grants_create_campaigns,
+			grants_create_registration_keys: grants_create_registration_keys
+		})
+	})
+
+	return res
+}

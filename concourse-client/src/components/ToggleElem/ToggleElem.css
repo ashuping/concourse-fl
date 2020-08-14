@@ -1,0 +1,33 @@
+.te-wrapper {
+    flex: 0 0 auto;
+    display: flex;
+    width: max-content;
+    transition: all 0.2s;
+    border-radius: 1em;
+    padding: 0.25em 1em;
+    margin: 0.5em;
+    cursor: pointer;
+}
+
+.te-wrapper-checked {
+    background-color: var(--toggle-active-bg);
+    color: var(--toggle-active-fg);
+    border: 1px solid var(--toggle-active-border);
+}
+
+.te-wrapper-unchecked {
+    background-color: var(--toggle-inactive-bg);
+    color: var(--toggle-inactive-fg);
+    border: 1px solid var(--toggle-inactive-border);
+
+}
+
+.te-wrapper .te-text {
+    flex: 0 0 auto;
+    margin: auto;
+}
+
+.te-wrapper svg {
+    flex: 0 0 auto;
+    margin: auto 0 auto 1em;
+}

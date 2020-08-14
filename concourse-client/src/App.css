@@ -45,6 +45,7 @@
 	--link-hover: var(--light-violet);
 
 	--default-border: var(--prime-green);
+	--de-emphasized-border: var(--prime-violet);
 
 	--de-emphasized-text: var(--fg-grey);
 	--bad-emphasized-item: var(--prime-red);
@@ -55,10 +56,12 @@
 	--online-emphasized-item-fg: var(--dark-green);
 
 	--text-input-bg: rgba(var(--very-dark-rgba), 0.4);
-	--text-input-border: var(--default-border);
+	--text-input-border: var(--de-emphasized-border);
 	--text-input-border-bad: var(--prime-red);
 	--text-input-border-good: var(--default-border);
 	--text-input-text: var(--defaul-text);
+
+	--text-input-border-selected: var(--default-border);
 
 	--button-normal-bg: var(--dark-violet);
 	--button-normal-border: var(--prime-violet);
@@ -74,6 +77,16 @@
 	--button-red-hover-border: var(--button-red-border);
 	--button-disabled-bg: var(--dark-grey);
 	--button-disabled-border: var(--fg-light);
+	--button-working-bg: var(--text-input-bg);
+	--button-working-border: var(--button-working-bg);
+
+	--toggle-inactive-bg: var(--offline-emphasized-item-bg);
+	--toggle-inactive-fg: var(--offline-emphasized-item-fg);
+	--toggle-inactive-border: var(--offline-emphasized-item-fg);
+
+	--toggle-active-bg: var(--online-emphasized-item-bg);
+	--toggle-active-fg: var(--online-emphasized-item-fg);
+	--toggle-active-border: var(--online-emphasized-item-fg);
 }
 
 html, body {
@@ -179,10 +192,21 @@ a:hover{
 .std-form input[type=url],
 .std-form input[type=email]{
     padding: 0.5em 1em;
-    border-radius: 1em;
-    background-color: var(--text-input-bg);
-    border: 2px solid var(--text-input-border);
-    color: var(--text-input-text);
+    /* border-radius: 1em; */
+	background-color: var(--text-input-bg);
+	border: none;
+    border-bottom: 2px solid var(--text-input-border);
+	color: var(--text-input-text);
+	transition: all 0.2s;
+}
+
+.std-form input[type=text]:focus,
+.std-form input[type=password]:focus,
+.std-form input[type=number]:focus,
+.std-form input[type=search]:focus,
+.std-form input[type=url]:focus,
+.std-form input[type=email]:focus{
+	border-bottom-color: var(--text-input-border-selected);
 }
 
 .button{
@@ -197,7 +221,7 @@ a:hover{
 	transition: 0.2s;
 }
 
-.button:hover{
+.button:hover, .button.button-force-hover{
 	background-color: var(--button-hover-bg);
 	border-color: var(--button-hover-border);
 }
@@ -207,7 +231,7 @@ a:hover{
 	border-color: var(--button-green-border);
 }
 
-.button-green:hover{
+.button-green:hover, .button-green.button-force-hover{
 	background-color: var(--button-green-hover-bg);
 	border-color: var(--button-green-hover-border);
 }
@@ -217,20 +241,31 @@ a:hover{
 	border-color: var(--button-red-border);
 }
 
-.button-red:hover{
+.button-red:hover, .button-red.button-force-hover{
 	background-color: var(--button-red-hover-bg);
 	border-color: var(--button-red-hover-border);
 }
 
 .button-disabled{
 	background-color: var(--button-disabled-bg);
-	border: 1px solid var(--button-disabled-border);
+	border: 2px solid var(--button-disabled-border);
 	cursor: not-allowed;
 }
 
-.button-disabled:hover{
+.button-disabled:hover, .button-disabled.button-force-hover{
 	background-color: var(--button-disabled-bg);
 	border-color: var(--button-disabled-border);
+}
+
+.button-working {
+	background-color: var(--button-working-bg);
+	border-color: var(--button-working-border);
+	cursor: wait;
+}
+
+.button-working:hover, .button-working.button-force-hover {
+	background-color: var(--button-working-bg);
+	border-color: var(--button-working-border);
 }
 
 .smol-warn{

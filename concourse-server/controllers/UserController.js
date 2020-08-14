@@ -26,7 +26,9 @@ import { EmailModel } from '../models/EmailSchema.js'
 import { RegistrationKeyModel } from '../models/RegistrationKeySchema.js'
 
 import { gen_IEX } from './XIDController.js'
+import { add_user_to_campaign } from './CampaignController.js'
 import { send_verification_email, check_verification_email } from './MailController.js'
+import { CampaignModel } from '../models/CampaignSchema.js'
 
 const mail_regex = /^(?=[A-Z0-9][A-Z0-9@._%+-]{5,253}$)[A-Z0-9._%+-]{1,64}@(?:(?=[A-Z0-9-]{1,63}\.)[A-Z0-9]+(?:-[A-Z0-9]+)*\.){1,8}[A-Z]{2,63}$/i
 
@@ -194,7 +196,8 @@ export const RegisterUser = async (req, res, next) => {
 	}
 
 	let found_key = null
-	let set_campaigns = []
+	let set_campaign = null
+	let campaign_obj = null
 	let make_admin = false
 	let let_create_campaigns = false
 	let let_create_registration_keys = false
@@ -213,7 +216,17 @@ export const RegisterUser = async (req, res, next) => {
 				})
 			}
 
-			set_campaigns = found_key.add_to_campaign ? [found_key.add_to_campaign] : []
+			if(found_key.campaign){
+				set_campaign = found_key.campaign
+				campaign_obj = await CampaignModel.findById(set_campaign.cid)
+				if(!campaign_obj){
+					return res.status(404).json({
+						reason: "Key is associated with a campaign that does not exist.",
+						campaign: set_campaign.cid
+					})
+				}
+			}
+
 			make_admin = found_key.grants_administrator
 			let_create_campaigns = found_key.grants_create_campaigns
 			let_create_registration_keys = found_key.grants_create_registration_keys
@@ -307,7 +320,6 @@ export const RegisterUser = async (req, res, next) => {
 		administrator: make_admin,
 		can_create_campaigns: let_create_campaigns,
 		can_create_registration_keys: let_create_registration_keys,
-		campaigns: set_campaigns
 	})
 
 	// Then, create the email object for the primary email
@@ -332,6 +344,21 @@ export const RegisterUser = async (req, res, next) => {
 	})
 
 	await user_login.save()
+
+	// If relevant, add the user to the key's campaign
+	if(set_campaign){
+		await add_user_to_campaign(user_profile, campaign_obj, set_campaign.roles)
+		// const user_cmember = new CampaignMemberModel({
+		// 	user: user_profile._id,
+		// 	roles: set_campaign.roles
+		// })
+
+		// await user_cmember.save()
+
+		// campaign_obj.members.push(user_cmember)
+
+		// await campaign_obj.save()
+	}
 
 	if(found_key && found_key.uses_total > 0){
 		found_key.uses_remaining -= 1

@@ -1,0 +1,82 @@
+.campaign-create {
+    border: 1px solid var(--default-border);
+    overflow-y: hidden;
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+}
+
+.campaign-new-header {
+    background-color: var(--offline-emphasized-item-bg);
+    color: var(--offline-emphasized-item-fg);
+
+    display: flex;
+    padding: 1em 2em;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-size: large;
+    flex: 0 0 auto;
+}
+
+.campaign-new-header .cleft {
+    flex: 0 1 auto;
+    font-size: x-large;
+}
+
+.campaign-new-header .ccenter {
+    flex: 1 1 auto;
+    text-align: center;
+    margin: auto;
+}
+
+.campaign-new-header .cright {
+    flex: 0 1 auto;
+    text-align: right;
+    margin: auto;
+    transition: all 0.3s;
+}
+
+.campaign-new-header .cright span {
+    margin-right: 1em;
+}
+
+.campaign-new-header input {
+    font-variant: small-caps;
+}
+
+.campaign-new-header svg {
+    vertical-align: middle;
+}
+
+.campaign-new-header span {
+    margin-left: 1em;
+    padding: auto;
+}
+
+.campaign-create-inner {
+    padding: 1em 1em;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.campaign-create-elem {
+    border-bottom: 1px solid var(--default-border);
+}
+
+.campaign-create-elem h1 {
+    width: max-content;
+}
+
+.campaign-button {
+    border: 1px solid var(--button-green-border);
+    background-color: var(--button-green-bg);
+    border-radius: 0.2em;
+    padding: 0.3em 1em;
+    transition: all 0.1s;
+    cursor: pointer;
+}
+
+.campaign-button:hover {
+    border: 1px solid var(--button-green-hover-border);
+    background-color: var(--button-green-hover-bg);
+}

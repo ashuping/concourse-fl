@@ -140,6 +140,14 @@ function App() {
 						props={null}
 					/>
 				</Route>
+				<Route exact path="/campaigns/create">
+					<DashboardView 
+						cfetch={fetch_wrapper}
+						set_title={set_title}
+						active_tab="campaign_create"
+						props={null}
+					/>
+				</Route>
 				<Route exact path="/campaigns/:cid" 
 					render={props => <DashboardView 
 						cfetch={fetch_wrapper}

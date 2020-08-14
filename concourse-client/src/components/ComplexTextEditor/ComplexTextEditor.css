@@ -1,0 +1,9 @@
+.complex-text-editor {
+    border: 1px solid var(--text-input-border);
+    background-color: var(--text-input-bg);
+    transition: all 0.2s;
+}
+
+.complex-text-editor:focus-within {
+    border-color: var(--text-input-border-selected);
+}

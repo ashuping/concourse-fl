@@ -57,7 +57,7 @@ async function RefreshLogin(){
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        credentials: 'include',
+        credentials: 'same-origin',
         body: JSON.stringify({
             method: 'token'
         })

@@ -18,7 +18,6 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 
 import IField from '../../components/IField/IField.js'
-import { Login } from '../../util/Auth.js'
 import { Register } from '../../util/Users.js'
 
 import bg from '../../assets/starry-sky-bg.svg'

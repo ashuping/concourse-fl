@@ -1,5 +1,25 @@
-.ifield td.ifield-tbox {
-    padding: 0 0.5em;
+.ifield {
+    display: flex;
+    width: 100%;
+}
+
+.ifield-left, .ifield-right {
+    flex: 0 1 auto;
+    display: flex;
+    margin: auto;
+}
+
+.ifield-center {
+    flex: 1 1 auto;
+    display: flex;
+}
+
+.ifield-center {
+    padding: 0 1em;
+}
+
+.ifield-center input {
+    width: 100%;
 }
 
 .ifield svg {

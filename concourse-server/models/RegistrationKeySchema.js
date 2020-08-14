@@ -46,9 +46,30 @@ const registrationKeySchema = new Schema({
         type: Number,
         default: -1
     },
+    campaign: {
+        type: {
+            cid: {
+                type: ObjectId,
+                ref: 'Campaign',
+                required: true
+            },
+            roles: {
+                type: [ObjectId],
+                ref: 'CampaignRole',
+                required: true
+            }
+        },
+        required: false
+
+    },
     add_to_campaign: {
         type: ObjectId,
+        ref: 'Campaign',
         required: false
+    },
+    campaign_role: {
+        type: ObjectId,
+
     },
     grants_administrator: {
         type: Boolean,

@@ -33,7 +33,6 @@
     flex: 1 1 auto;
     text-align: center;
     margin: auto;
-    /* font-variant: small-caps; */
 }
 
 .campaign-header .cjoin {
@@ -72,4 +71,34 @@ a.campaign-header:hover .cjoin svg {
 
 .campaign-body h1.no-top-margin {
     margin-top: 0;
+}
+
+.invite-btn {
+    border: 1px solid var(--default-border);
+    padding: 1em;
+    border-radius: 1em;
+    width: 50%;
+    margin: auto;
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.invite-btn h2{
+    text-align: center;
+    width: 100%;
+    margin-top: 0;
+}
+
+.invite-btn .sb-container{
+    margin-top: 1em;
+}
+
+.invite-toggle-row, .role-toggle-row {
+    display: flex;
+}
+
+.invite-toggle-row span, .role-toggle-row span {
+    flex: 1 0 auto;
+    margin: auto;
 }

@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom'
 import { PlusSquare } from 'react-feather'
 
 import { GetCampaigns } from '../../util/Campaigns.js'
+import { CTERenderer } from '../ComplexTextEditor/ComplexTextEditor.js'
 
 import './CampaignList.css'
 
@@ -41,16 +42,15 @@ function CampaignListElem({campaign}){
         {join_box}
         <h1><Link to={`/campaigns/${campaign._id}`}>{campaign.name}</Link></h1>
         <div>
-            <p>{campaign.description}</p>
+            <CTERenderer cte_raw_content={JSON.parse(campaign.description)} short={true} />
         </div>
     </div>
 }
 
-// function CampaignList({campaigns}){
-function CampaignList(){
+function CampaignList({user}){
     const [campaigns, set_campaigns] = useState(null)
 
-    const e_get_c = useEffect(() => {
+    useEffect(() => {
         GetCampaigns().then((response) => {
             set_campaigns(response)
         })
@@ -65,7 +65,10 @@ function CampaignList(){
     })
 
     return <div className="campaign-list">
-        <div className="campaign-new"><PlusSquare /> <span style={{padding: "auto"}}>New Campaign</span></div>
+        {user.can_create_campaigns 
+            ? <Link to="/campaigns/create" className="campaign-new"><PlusSquare /> <span>New Campaign</span></Link>
+            : null
+        }
         <div className="campaign-list-inner">
             {campaign_elems}
         </div>

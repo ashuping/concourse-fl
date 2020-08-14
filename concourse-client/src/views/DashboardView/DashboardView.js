@@ -20,25 +20,31 @@ import './DashboardView.css'
 
 import CampaignDetail from '../../components/CampaignDetail/CampaignDetail.js'
 import CampaignList from '../../components/CampaignList/CampaignList.js'
+import CampaignCreate from '../../components/CampaignCreate/CampaignCreate.js'
 import UserProfile from '../../components/UserProfile/UserProfile.js'
 
 const dbTabs = {
     CAMPAIGNS: {
-        obj: (cfetch, set_title, props) => <CampaignList />
+        obj: (cfetch, set_title, props, user) => <CampaignList user={user} />
     },
     PROFILE: {
-        obj: (cfetch, set_title, props) => <UserProfile cfetch={cfetch} />
+        obj: (cfetch, set_title, props, user) => <UserProfile cfetch={cfetch} />
     },
     ADMIN: {
-        obj: (cfetch, set_title, props) => <div><blink><marquee><h1 className="spin">under construction</h1></marquee></blink></div>
+        obj: (cfetch, set_title, props, user) => <div><blink><marquee><h1 className="spin">under construction</h1></marquee></blink></div>
     },
     CAMPAIGN_DETAIL: {
-        obj: (cfetch, set_title, props) => {
+        obj: (cfetch, set_title, props, user) => {
             if(props){
                 return <CampaignDetail campaign_id={props.match.params.cid} />
             }else{
                 return null
             }
+        }
+    },
+    CAMPAIGN_CREATE: {
+        obj: (cfetch, set_title, props, user) => {
+            return <CampaignCreate cfetch={cfetch} />
         }
     }
 }
@@ -58,6 +64,8 @@ function DashboardView({cfetch, set_title, active_tab, props}){
         }else if(active_tab === "campaign_detail"){
             console.log(`CID is ${props.match.params.cid} (props: ${JSON.stringify(props)})`)
             set_mode(dbTabs.CAMPAIGN_DETAIL)
+        }else if(active_tab === "campaign_create"){
+            set_mode(dbTabs.CAMPAIGN_CREATE)
         }else{
             set_mode(dbTabs.CAMPAIGNS)
         }
@@ -69,7 +77,6 @@ function DashboardView({cfetch, set_title, active_tab, props}){
 
 	useEffect(() => {
 		cfetch("user", "current", false).then((user) => {
-            console.log('User: ' + user)
             set_user(user)
             set_user_loaded(true)
         })
@@ -94,7 +101,7 @@ function DashboardView({cfetch, set_title, active_tab, props}){
                 <div><Link to="/profile">Profile</Link></div>
                 <div><Link to="/admin">Administrator Tools</Link></div>
             </div>
-            {mode.obj(cfetch, set_title, props)}
+            {mode.obj(cfetch, set_title, props, user)}
         </div>
     </div>
 
