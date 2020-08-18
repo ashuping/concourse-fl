@@ -52,11 +52,15 @@ function CampaignList({user}){
 
     useEffect(() => {
         GetCampaigns().then((response) => {
-            set_campaigns(response)
+            if(response === null){
+                set_campaigns([])
+            }else{
+                set_campaigns(response)
+            }
         })
     }, [set_campaigns])
 
-    if(!campaigns){
+    if(campaigns === null){
         return <h1>Loading...</h1>
     }
 

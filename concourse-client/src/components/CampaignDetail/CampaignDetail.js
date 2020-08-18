@@ -25,7 +25,6 @@ import { GetCampaigns, GenCampaignInvite } from '../../util/Campaigns.js'
 import { CTERenderer } from '../ComplexTextEditor/ComplexTextEditor.js'
 
 import './CampaignDetail.css'
-import { request } from 'http'
 
 function CDTopbar({campaign}){
     const name_text = `${campaign.creator.username} / ${campaign.name}`
@@ -123,7 +122,7 @@ function InviteButton({campaign}){
     }
 
     function doSubmit(){
-        if(status == SBStatus.READY){
+        if(status === SBStatus.READY){
             set_request_status(SBStatus.WORKING)
             GenCampaignInvite(
                 text,
@@ -161,7 +160,7 @@ function InviteButton({campaign}){
                     set_roles(new_roles)
                 }else{
                     const new_roles = roles.filter((elem) => {
-                        return elem != role._id
+                        return elem !== role._id
                     })
                     set_roles(new_roles)
                 }
