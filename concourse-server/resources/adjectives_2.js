@@ -1,0 +1,32 @@
+export default {
+    "words": [
+        "cute",
+        "cute",
+        "adorable",
+        "adorable",
+        "noble",
+        "regal",
+        "smart",
+        "clever",
+        "rebellious",
+        "confident",
+        "courageous",
+        "sporty",
+        "mischeivous",
+        "naughty",
+        "quick-witted",
+        "adventurous",
+        "wise",
+        "shy",
+        "scrappy",
+        "sleepy",
+        "loyal",
+        "huffy",
+        "mad",
+        "stoic",
+        "attentive",
+        "certified",
+        "polite",
+        "cromulent"
+    ]
+    }

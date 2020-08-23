@@ -66,7 +66,7 @@ const campaignMemberSchema = new Schema({
     }
 })
 
-const campaignSchema = new Schema({
+const CampaignSchema = new Schema({
     creator: {
         type: ObjectId,
         ref: 'UserProfile',
@@ -80,16 +80,46 @@ const campaignSchema = new Schema({
         type: String,
         required: true
     },
-    members: {
-        type: [{type: ObjectId, ref: 'CampaignMember'}],
-        required: true
+    /* Virtual:
+     *   - members
+     *   - characters
+     *   - attributes
+     *   - roles
+     */
+}, {
+    toJSON: {
+        virtuals: true
     },
-    roles: {
-        type: [{type: ObjectId, ref: 'CampaignRole'}],
-        required: true
+    toObject: {
+        virtuals: true
     }
 })
 
-export const CampaignModel = mongoose.model('Campaign', campaignSchema)
+CampaignSchema.virtual('members', {
+    ref: 'CampaignMember',
+    localField: '_id',
+    foreignField: 'campaign'
+})
+
+CampaignSchema.virtual('characters', {
+    ref: 'CharacterInstance',
+    localField: '_id',
+    foreignField: 'campaign'
+})
+
+CampaignSchema.virtual('attributes', {
+    ref: 'CampaignCharacterAttribute',
+    localField: '_id',
+    foreignField: 'campaign'
+})
+
+CampaignSchema.virtual('roles', {
+    ref: 'CampaignRole',
+    localField: '_id',
+    foreignField: 'campaign'
+})
+
+
+export const CampaignModel = mongoose.model('Campaign', CampaignSchema)
 export const CampaignMemberModel = mongoose.model('CampaignMember', campaignMemberSchema)
 export const CampaignRoleModel = mongoose.model('CampaignRole', campaignRoleSchema)

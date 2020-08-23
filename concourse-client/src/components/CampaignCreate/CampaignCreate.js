@@ -9,20 +9,12 @@ import ComplexTextEditor from '../ComplexTextEditor/ComplexTextEditor.js'
 
 import { CreateCampaign } from '../../util/Campaigns.js'
 
-import '../../assets/react-draft-wysiwyg.css'
 import './CampaignCreate.css'
 
-function CampaignCreate({cfetch}){
-    const [user, set_user] = useState(null)
+function CampaignCreate({user}){
     const [name, set_name] = useState("")
     const [desc, set_desc] = useState(EditorState.createEmpty())
     const [redir, do_redir] = useState(null)
-
-    useEffect(() => {
-        cfetch('user', 'current').then((resUser) => {
-            set_user(resUser)
-        })
-    }, [cfetch])
 
     function saveCB(){
         console.log(desc.getCurrentContent())
@@ -39,13 +31,6 @@ function CampaignCreate({cfetch}){
 
     if(redir){
         return <Redirect to={redir} />
-    }
-
-    // const user = cfetch('user', 'current')
-    if(!user){
-        return <div className="campaign-create">
-            <h1>Loading...</h1>
-        </div>
     }
 
     let nText = name

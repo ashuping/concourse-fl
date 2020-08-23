@@ -47,6 +47,9 @@ passport.use(new pl.Strategy({
 		}
 
 		const email = await EmailModel.findOne({address: username})
+		if(!email){
+			return callback(null, false, {message: auth_fail_message})
+		}
 
 		const found_user = await UserLoginModel.findOne({email: email._id})
 		if(!found_user){

@@ -21,8 +21,11 @@ import { Power, Play, MinusCircle, Slash, User } from 'react-feather'
 import { IField_Flexbox } from '../IField/IField.js'
 import StatusButton, { SBStatus } from '../StatusButton/StatusButton.js'
 import ToggleElem from '../ToggleElem/ToggleElem.js'
-import { GetCampaigns, GenCampaignInvite } from '../../util/Campaigns.js'
+import { GetOneCampaign, GenCampaignInvite } from '../../util/Campaigns.js'
 import { CTERenderer } from '../ComplexTextEditor/ComplexTextEditor.js'
+
+import CharacterList from '../CharacterList/CharacterList.js'
+import CharacterEdit from '../CharacterEdit/CharacterEdit.js'
 
 import './CampaignDetail.css'
 
@@ -82,7 +85,7 @@ function PlayerList({players}){
         <div 
             className="player-list-player"
             key={player.user._id}
-            title={`${player.user.username} The ${player.user.iex}`}
+            title={`${player.user.username} the ${player.user.iex}`}
         >
             <User /><span>{player.user.username}</span>
         </div>)
@@ -178,7 +181,7 @@ function InviteButton({campaign}){
             name="Invite Code"
             help_text="Enter a phrase to use as an invite code."
             good_text=""
-            bad_text="Minimum invite length is 32 characters."
+            bad_text="Minimum invite length is 16 characters."
         />
         <IField_Flexbox
             changeCallback={(event) => set_uses(event.target.value)}
@@ -221,22 +224,35 @@ function InviteButton({campaign}){
     </div>
 }
 
-function CampaignDetail({campaign_id}){
+function CampaignDetail({user, params}){
     const [campaign, set_campaign] = useState(null)
     const [load_done, set_load_done] = useState(false)
+    const [inst_to_edit, set_inst_to_edit] = useState(null)
+    const [do_inst_edit, set_do_inst_edit] = useState(false)
 
-    // TODO: API endpoint to retrieve only one campaign
     useEffect(() => {
-        GetCampaigns().then((response) => {
-            for(const camp of response){
-                if(camp._id === campaign_id){
-                    set_campaign(camp)
-                }
-            }
-
+        GetOneCampaign(params.cid).then((response) => {
+            set_campaign(response)
             set_load_done(true)
         })
-    }, [set_campaign, set_load_done, campaign_id])
+    }, [set_campaign, set_load_done, params])
+
+    useEffect(() => {
+        if(campaign && params.cmode === "edit" && params.charid){
+            for(const instance of campaign.instances){
+                if(instance._id.toString() === params.charid.toString()){
+                    set_inst_to_edit(instance)
+                    set_do_inst_edit(true)
+                    break
+                }
+            }
+        }else if(campaign && params.cmode === "new"){
+            set_inst_to_edit(null)
+            set_do_inst_edit(true)
+        }else{
+            set_do_inst_edit(false)
+        }
+    }, [campaign, params])
 
     if(!campaign){
         if(load_done){
@@ -254,7 +270,12 @@ function CampaignDetail({campaign_id}){
                 cte_raw_content={JSON.parse(campaign.description)}
             />
             <h1>Characters</h1>
-            <p>somebody</p>
+            <CharacterList
+                chars={campaign.instances}
+                campaign={campaign}
+                user={user}
+            />
+            {do_inst_edit ? <CharacterEdit user={user} init_char={inst_to_edit} campaign={campaign} /> : null }
             <h1>Players</h1>
             <PlayerList players={campaign.members} />
             {campaign.permissions.administrate ? <InviteButton campaign={campaign} /> : null}

@@ -82,6 +82,10 @@ function StatusButton({onClick, status, ready_text, disabled_text, working_text,
             text = failed_text
             btn_cls = 'button-red button-force-hover'
             break
+        default:
+            console.error('Unexpected default case in StatusButton object.')
+            text = 'Client-side internal error'
+            btn_cls = 'button-red button-force-hover'
     }
 
     return <div className={`sb-container ${status.class}`}>

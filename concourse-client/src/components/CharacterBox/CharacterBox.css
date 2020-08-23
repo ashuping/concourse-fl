@@ -1,0 +1,54 @@
+.character-box {
+    /* min-width: 18em;
+    max-width: 22em; */
+    width: 20em;
+    min-height: 7em;
+    border: 1px solid var(--default-border);
+    border-radius: 1em;
+    overflow: hidden;
+}
+
+.character-box .charbox-name {
+    /* background-color: var(--default-border); */
+    font-size: large;
+    font-weight: bold;
+    /* color: var(--text-on-default-border); */
+    border-bottom: 1px solid var(--default-border);
+    padding: 0.5em 1em;
+    margin: 0;
+}
+
+.charbox-inner {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5em 1em 1em 1em;
+}
+
+.charbox-inner > * {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.charbox-health {
+    min-height: 1em;
+    display: flex;
+    flex-direction: row;
+}
+
+.charbox-health .charbox-health-desc {
+    flex: 0 0 auto;
+    width: max-content;
+    margin: auto;
+    margin-right: 1em;
+}
+
+.charbox-health .cbox-dmb {
+    flex: 1 1 auto;
+    min-height: 1em;
+    margin: auto;
+}
+
+.charbox-speed {
+    flex: 1 1 auto;
+    padding-top: 1em;
+}

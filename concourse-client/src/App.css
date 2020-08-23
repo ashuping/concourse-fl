@@ -45,6 +45,7 @@
 	--link-hover: var(--light-violet);
 
 	--default-border: var(--prime-green);
+	--text-on-default-border: var(--bg-dark);
 	--de-emphasized-border: var(--prime-violet);
 
 	--de-emphasized-text: var(--fg-grey);
@@ -59,7 +60,10 @@
 	--text-input-border: var(--de-emphasized-border);
 	--text-input-border-bad: var(--prime-red);
 	--text-input-border-good: var(--default-border);
-	--text-input-text: var(--defaul-text);
+	--text-input-text: var(--default-text);
+	--text-input-border-disabled: var(--offline-emphasized-item-fg);
+	--text-input-bg-disabled: var(--offline-emphasized-item-bg);
+	--text-input-text-disabled: var(--bg-dark);
 
 	--text-input-border-selected: var(--default-border);
 
@@ -207,6 +211,17 @@ a:hover{
 .std-form input[type=url]:focus,
 .std-form input[type=email]:focus{
 	border-bottom-color: var(--text-input-border-selected);
+}
+
+.std-form input[type=text]:disabled,
+.std-form input[type=password]:disabled,
+.std-form input[type=number]:disabled,
+.std-form input[type=search]:disabled,
+.std-form input[type=url]:disabled,
+.std-form input[type=email]:disabled{
+	border-bottom-color: var(--text-input-border-disabled);
+	background-color: var(--text-input-bg-disabled);
+	color: var(--text-input-text-disabled);
 }
 
 .button{

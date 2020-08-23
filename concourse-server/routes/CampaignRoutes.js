@@ -1,5 +1,5 @@
 /* City of Concourse Website - Campaign Routes
-	Copyright 2019 Alex Isabelle Shuping
+	Copyright 2020 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@ const Router = express.Router()
 
 import passport from 'passport'
 
-// import { Login, Logout } from '../controllers/AuthenticationController.js'
-import { CreateCampaign, RetrieveAllCampaigns } from '../controllers/CampaignController.js'
+import { CreateCampaign, RetrieveAllCampaigns, RetrieveCampaign, CreateInstanceAttribute } from '../controllers/CampaignController.js'
 
 Router.get('/', passport.authenticate('jwt', {session: false}), RetrieveAllCampaigns)
+Router.get('/:id', passport.authenticate('jwt', {session: false}), RetrieveCampaign)
 Router.post('/new', passport.authenticate('jwt', {session: false}), CreateCampaign)
+Router.post('/:id/attributes/new', passport.authenticate('jwt', {session: false}), CreateInstanceAttribute)
 
 export default Router

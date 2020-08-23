@@ -3,6 +3,10 @@ import nodemailer from 'nodemailer'
 
 import { EmailVerifierModel } from '../models/EmailVerifierSchema.js'
 import { EmailModel } from '../models/EmailSchema.js'
+import { UserProfileModel } from '../models/UserProfileSchema.js'
+import { UserLoginModel } from '../models/UserLoginSchema.js'
+
+import { safe_delete_user } from './UserController.js'
 
 let transport = null
 
@@ -34,6 +38,10 @@ export async function send_mail(info){
 
 export async function gen_verifier(){
     return (await __promisified_crypto_random_bytes(64))
+}
+
+export async function safe_delete_email(email){
+    await EmailModel.findByIdAndDelete(email._id)
 }
 
 export async function send_verification_email(uid, user_email){
@@ -85,4 +93,40 @@ export async function check_verification_email(code){
     await verifier.deleteOne()
 
     return to_return
+}
+
+/* Perform necessary cleanup after marking an e-mail as verified.
+ * 
+ * Note that the relevant email must be marked as verified BEFORE calling
+ * this function.
+ * 
+ * This function will look for any unverified email addresses that conflict
+ * with the just-registered address and delete them. Additionally, if an
+ * account was registered with the deleted address as its primary address, then
+ * that account will be deleted.
+ */
+export async function post_verify_cleanup(email){
+    await EmailVerifierModel.deleteMany({
+        address: email
+    })
+
+    const orphan_emails = await EmailModel.find({
+        address: email,
+        verified: false
+    })
+
+    for(const orphan of orphan_emails){
+        if(orphan.primary){
+            const profile = await UserProfileModel.findById(orphan.user)
+            if(profile){
+                await safe_delete_user(profile)
+                // safe_delete_user already cleans up emails, so we don't want
+                // to try to delete it separately.
+            }else{
+                await EmailModel.findByIdAndDelete(orphan._id)
+            }
+        }else{
+            await EmailModel.findByIdAndDelete(orphan._id)
+        }
+    }
 }

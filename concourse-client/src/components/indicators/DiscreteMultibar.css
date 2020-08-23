@@ -1,0 +1,98 @@
+.cbox-dmb {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.cbox-dmb.dmb-vertical {
+    flex-direction: column;
+}
+
+.cbox-dmb.dmb-horizontal {
+    flex-direction: row-reverse;
+}
+
+.cbox-dmb * {
+    flex: 1 1 auto;
+    height: auto;
+    width: auto;
+    transition: all 0.5s;
+}
+
+.dmb-theme-bland {
+    --dmb-bg-on: #FFF;
+    --dmb-border-inner-on: #333;
+    --dmb-border-outer-on: #333;
+    --dmb-bg-off: #666;
+    --dmb-border-inner-off: #333;
+    --dmb-border-outer-off: #333;
+}
+
+.dmb-theme-hero-health {
+    --dmb-bg-on: #03ff00;
+    --dmb-border-inner-on: #0a0;
+    --dmb-border-outer-on: #777;
+    --dmb-bg-off: #8f1715;
+    --dmb-border-inner-off: #600;
+    --dmb-border-outer-off: #777;
+}
+
+.dmb-theme-villain-health {
+    --dmb-bg-on: #f00;
+    --dmb-border-inner-on: #f00;
+    --dmb-border-outer-on: #777;
+    --dmb-bg-off: #6c1715;
+    --dmb-border-inner-off: #6c1715;
+    --dmb-border-outer-off: #777;
+}
+
+.dmb-theme {
+    border-width: thin;
+    border-style: solid;
+    background-color: var(--dmb-bg);
+}
+.dmb-theme.cbox-dmb-off {
+    --dmb-border-outer: var(--dmb-border-outer-off);
+    --dmb-border-inner: var(--dmb-border-inner-off);
+    --dmb-bg: var(--dmb-bg-off);
+}
+.dmb-theme.cbox-dmb-on {
+    --dmb-border-outer: var(--dmb-border-outer-on);
+    --dmb-border-inner: var(--dmb-border-inner-on);
+    --dmb-bg: var(--dmb-bg-on);
+}
+.cbox-dmb.dmb-vertical .dmb-theme {
+    border-left-color: var(--dmb-border-outer);
+    border-right-color: var(--dmb-border-outer);
+    border-top-color: var(--dmb-border-inner);
+    border-bottom-color: var(--dmb-border-inner);
+    background-color: var(--dmb-bg);
+}
+.cbox-dmb.dmb-horizontal .dmb-theme {
+    border-left-color: var(--dmb-border-inner);
+    border-right-color: var(--dmb-border-inner);
+    border-top-color: var(--dmb-border-outer);
+    border-bottom-color: var(--dmb-border-outer);
+}
+
+.cbox-dmb.dmb-vertical .cbox-dmb-top {
+    border-top-left-radius: 100%;
+    border-top-right-radius: 100%;
+    border-top-color: var(--dmb-border-outer);
+}
+.cbox-dmb.dmb-horizontal .cbox-dmb-top {
+    border-top-right-radius: 100%;
+    border-bottom-right-radius: 100%;
+    border-right-color: var(--dmb-border-outer);
+}
+
+.cbox-dmb.dmb-vertical .cbox-dmb-bottom {
+    border-bottom-left-radius: 100%;
+    border-bottom-right-radius: 100%;
+    border-bottom-color: var(--dmb-border-outer);
+}
+.cbox-dmb.dmb-horizontal .cbox-dmb-bottom {
+    border-top-left-radius: 100%;
+    border-bottom-left-radius: 100%;
+    border-left-color: var(--dmb-border-outer);
+}

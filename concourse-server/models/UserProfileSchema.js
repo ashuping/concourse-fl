@@ -51,10 +51,6 @@ const userProfileSchema = new Schema({
 			required: true
 		}
 	},
-	emails: [{
-		type: ObjectId,
-		ref: 'Email'
-	}],
 	administrator: {
 		type: Boolean,
 		required: true
@@ -67,6 +63,30 @@ const userProfileSchema = new Schema({
 		type: Boolean,
 		required: true
 	}
+})
+
+userProfileSchema.virtual('members', {
+	ref: 'CampaignMember',
+	localField: '_id',
+	foreignField: 'user'
+})
+
+userProfileSchema.virtual('characters', {
+	ref: 'Character',
+	localField: '_id',
+	foreignField: 'owner'
+})
+
+userProfileSchema.virtual('login', {
+	ref: 'UserLogin',
+	localField: '_id',
+	foreignField: 'profile'
+})
+
+userProfileSchema.virtual('emails', {
+	ref: 'Email',
+	localField: '_id',
+	foreignField: 'user'
 })
 
 export const UserProfileModel = mongoose.model('UserProfile', userProfileSchema)

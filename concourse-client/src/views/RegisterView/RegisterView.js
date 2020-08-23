@@ -187,16 +187,6 @@ function RegisterView({cfetch, set_title}){
 			<h2>Please register below or <Link to='/login'>Log in</Link></h2>
 			{reg_warning}
 			<table className="register-form std-form"><tbody>
-				<tr>
-					<td>Pronouns</td>
-					<td><select value={pronouns_option} onChange={(event) => {set_pronouns_option(event.target.value)}}>
-						<option value="she">She/Her</option>
-						<option value="he">He/Him</option>
-						<option value="they">They/Them</option>
-						<option value="custom">Customize</option>
-					</select></td>
-				</tr>
-				{custom_pronouns}
 				<IField
 					changeCallback={(event) => set_email(event.target.value)}
 					good={mail_field_status || !email}
@@ -213,6 +203,16 @@ function RegisterView({cfetch, set_title}){
 					good_text=""
 					bad_text=""
 				/>
+				<tr>
+					<td>Pronouns</td>
+					<td><select value={pronouns_option} onChange={(event) => {set_pronouns_option(event.target.value)}}>
+						<option value="she">She/Her</option>
+						<option value="he">He/Him</option>
+						<option value="they">They/Them</option>
+						<option value="custom">Customize</option>
+					</select></td>
+				</tr>
+				{custom_pronouns}
 				<IField
 					changeCallback={(event) => set_password(event.target.value)}
 					good={true}
@@ -220,6 +220,7 @@ function RegisterView({cfetch, set_title}){
 					help_text="Choose a password."
 					good_text=""
 					bad_text=""
+					i_type="password"
 				/>
 				{regcode_line}
 			</tbody></table>

@@ -26,8 +26,9 @@ import { EmailModel } from '../models/EmailSchema.js'
 import { RegistrationKeyModel } from '../models/RegistrationKeySchema.js'
 
 import { gen_IEX } from './XIDController.js'
-import { add_user_to_campaign } from './CampaignController.js'
-import { send_verification_email, check_verification_email } from './MailController.js'
+import { add_user_to_campaign, safe_delete_member } from './CampaignController.js'
+import { safe_delete_character } from './CharacterController.js'
+import { send_verification_email, check_verification_email, post_verify_cleanup, safe_delete_email } from './MailController.js'
 import { CampaignModel } from '../models/CampaignSchema.js'
 
 const mail_regex = /^(?=[A-Z0-9][A-Z0-9@._%+-]{5,253}$)[A-Z0-9._%+-]{1,64}@(?:(?=[A-Z0-9-]{1,63}\.)[A-Z0-9]+(?:-[A-Z0-9]+)*\.){1,8}[A-Z]{2,63}$/i
@@ -133,6 +134,38 @@ export const validate_campaigns = async (campaigns) => {
 	})
 
 	return parsed_campaigns
+}
+
+export const process_user_for_user = async (requested_user, requesting_user) => {
+	if(requested_user._id.toString() === requesting_user._id.toString()){
+		return requested_user
+	}else{
+		return {
+			_id: requested_user._id,
+			username: requested_user.username,
+			iex: requested_user.iex,
+			pronouns: requested_user.pronouns
+		}
+	}
+}
+
+export const safe_delete_user = async (user) => {
+	await user.populate('members').populate('emails').populate('login').execPopulate('characters')
+
+	for(const member of user.members){
+		await safe_delete_member(member)
+	}
+
+	for(const email of user.emails){
+		await safe_delete_email(email)
+	}
+
+	for(const character of user.characters){
+		await safe_delete_character(character)
+	}
+
+	await UserLoginModel.findByIdAndDelete(user.login._id)
+	await UserProfileModel.findByIdAndDelete(user._id)
 }
 
 export const GetRegistrationOptions = async (req, res, next) => {
@@ -316,7 +349,6 @@ export const RegisterUser = async (req, res, next) => {
 			independent_possessive: req.body.pronouns.independent_possessive,
 			reflexive: req.body.pronouns.reflexive
 		},
-		emails: [],
 		administrator: make_admin,
 		can_create_campaigns: let_create_campaigns,
 		can_create_registration_keys: let_create_registration_keys,
@@ -329,9 +361,6 @@ export const RegisterUser = async (req, res, next) => {
 		primary: true,
 		user: user_profile._id
 	})
-
-	// Insert the email object into the user profile
-	user_profile.emails = [user_email._id]
 
 	await user_profile.save()
 	await user_email.save()
@@ -391,6 +420,9 @@ export const DoVerify = async (req, res, next) => {
 		if(!email){
 			return res.sendStatus(404)
 		}else{
+			email.verified = true
+			await email.save()
+			await post_verify_cleanup(email.address)
 			return res.sendStatus(200)
 		}
 	}catch(err){

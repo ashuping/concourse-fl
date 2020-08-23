@@ -1,6 +1,17 @@
 .ifield {
-    display: flex;
     width: 100%;
+}
+
+.ifield-flex {
+    display: flex;
+}
+
+.ifield td.ifield-tbox {
+    padding: 0 0.5em;
+}
+
+.ifield td {
+    margin: auto;
 }
 
 .ifield-left, .ifield-right {

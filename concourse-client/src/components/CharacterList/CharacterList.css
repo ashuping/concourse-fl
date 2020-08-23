@@ -1,0 +1,39 @@
+.character-list {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.character-list > * {
+    flex: 0 0 auto;
+    margin: 1em;
+}
+
+.character-list .character-list-newbox {
+    flex: 1 0 auto;
+    display: flex;
+    flex-flow: column;
+    padding: 1em;
+    border: 1px solid var(--button-green-border);
+    background-color: var(--button-green-bg);
+    color: var(--fg-light);
+    transition: all 0.2s;
+    border-radius: 1em;
+    max-width: 5em;
+    width: max-content;
+}
+
+.character-list .character-list-newbox svg {
+    flex: 1 1 auto;
+    margin: auto;
+}
+
+.character-list .character-list-newbox span {
+    flex: 1 1 auto;
+    margin: auto;
+    text-align: center;
+}
+
+.character-list .character-list-newbox:hover {
+    border-color: var(--button-green-hover-border);
+    background-color: var(--button-green-hover-bg);
+}

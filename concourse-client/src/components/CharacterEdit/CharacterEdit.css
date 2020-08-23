@@ -1,0 +1,90 @@
+.character-create {
+    border: 1px solid var(--default-border);
+    overflow-y: hidden;
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+}
+
+.character-new-header {
+    background-color: var(--offline-emphasized-item-bg);
+    color: var(--offline-emphasized-item-fg);
+
+    display: flex;
+    padding: 0 2em;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-size: large;
+    flex: 0 0 auto;
+}
+
+.character-new-header .cleft {
+    padding: 1em 0;
+    flex: 0 1 auto;
+    font-size: x-large;
+}
+
+.character-new-header .ccenter {
+    padding: 1em 0;
+    flex: 1 1 auto;
+    text-align: center;
+    margin: auto;
+}
+
+.character-new-header .cright {
+    flex: 0 1 auto;
+    text-align: right;
+    margin: auto;
+    padding: 1em;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.character-new-header .cright span {
+    margin-right: 1em;
+}
+
+.character-new-header input {
+    font-variant: small-caps;
+}
+
+.character-new-header svg {
+    vertical-align: middle;
+}
+
+.character-new-header span {
+    margin-left: 1em;
+    padding: auto;
+}
+
+.character-create-inner {
+    padding: 1em 1em;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.character-create-elem {
+    border-bottom: 1px solid var(--default-border);
+}
+
+.character-create-elem h1 {
+    width: max-content;
+}
+
+.character-button {
+    border: 1px solid var(--button-green-border);
+    background-color: var(--button-green-bg);
+    border-radius: 0.2em;
+    padding: 0.3em 1em;
+    transition: all 0.1s;
+    cursor: pointer;
+}
+
+.character-button:hover {
+    border: 1px solid var(--button-green-hover-border);
+    background-color: var(--button-green-hover-bg);
+}
+
+.character-create-inner .sb-container {
+    margin: 1em auto;
+}

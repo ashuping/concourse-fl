@@ -36,7 +36,7 @@ const dbTabs = {
     CAMPAIGN_DETAIL: {
         obj: (cfetch, set_title, props, user) => {
             if(props){
-                return <CampaignDetail campaign_id={props.match.params.cid} />
+                return <CampaignDetail params={props.match.params} user={user} />
             }else{
                 return null
             }
@@ -44,7 +44,7 @@ const dbTabs = {
     },
     CAMPAIGN_CREATE: {
         obj: (cfetch, set_title, props, user) => {
-            return <CampaignCreate cfetch={cfetch} />
+            return <CampaignCreate user={user} />
         }
     }
 }
@@ -62,7 +62,6 @@ function DashboardView({cfetch, set_title, active_tab, props}){
         }else if(active_tab === "admin"){
             set_mode(dbTabs.ADMIN)
         }else if(active_tab === "campaign_detail"){
-            console.log(`CID is ${props.match.params.cid} (props: ${JSON.stringify(props)})`)
             set_mode(dbTabs.CAMPAIGN_DETAIL)
         }else if(active_tab === "campaign_create"){
             set_mode(dbTabs.CAMPAIGN_CREATE)

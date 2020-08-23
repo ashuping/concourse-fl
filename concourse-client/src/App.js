@@ -156,6 +156,28 @@ function App() {
 						props={props}
 					/>}
 				/>
+				<Route exact path="/campaigns/:cid/characters/:charid/edit"
+					render={(props) => {
+						props.match.params.cmode = 'edit'
+						return <DashboardView 
+							cfetch={fetch_wrapper}
+							set_title={set_title}
+							active_tab="campaign_detail"
+							props={props}
+						/>
+					}}
+				/>
+				<Route exact path="/campaigns/:cid/characters/new"
+				render={(props) => {
+					props.match.params.cmode = 'new'
+					return <DashboardView 
+						cfetch={fetch_wrapper}
+						set_title={set_title}
+						active_tab="campaign_detail"
+						props={props}
+					/>
+				}}
+			/>
 			</Switch>
 		</Router>
 	);

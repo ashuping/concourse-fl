@@ -1,0 +1,52 @@
+.cbox-speedbar {
+    display: flex;
+    flex-direction: row;
+}
+
+.speedbar-val {
+    flex: 0 0 auto;
+    text-align: center;
+    margin: auto 1em auto 0;
+}
+
+.speedbar-spacer {
+    flex: 1 1 auto;
+}
+
+.speedbar-spinner {
+    flex: 0 0 auto;
+    margin: auto;
+}
+
+.speedbar-box-container {
+    flex: 0 0 auto;
+    width: 50%;
+    margin: auto;
+    background-color: var(--bg-dark);
+    height: 1em;
+    overflow: hidden;
+}
+
+@keyframes speed {
+    0%   {color:blue; transform: rotate(0deg);}
+    25%  {color:skyblue; transform: rotate(90deg);}
+    50%  {color:lightblue; transform: rotate(180deg);}
+    75%  {color:skyblue; transform: rotate(270deg);}
+    100% {color:blue; transform: rotate(360deg);}
+}
+
+@keyframes speedbar {
+    0%   {background-color:var(--bg-dark); margin-left: -1em; margin-right: 100%;}
+    50%  {background-color:var(--default-border);}
+    100% {background-color:var(--bg-dark); margin-left: 100%; margin-right: 0;}
+}
+
+.speedbar-bar {
+    animation: speedbar 2s linear 0s infinite;
+    height: 100%;
+    width: 1em;
+}
+
+.speedbar-spinner{
+    animation: speed 2s linear 0s infinite;
+}

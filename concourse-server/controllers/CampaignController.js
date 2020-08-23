@@ -15,8 +15,9 @@
  */
 
 import { CampaignModel, CampaignMemberModel, CampaignRoleModel } from '../models/CampaignSchema.js'
-import mongodb from 'mongodb'
-import { UserProfileModel } from '../models/UserProfileSchema.js'
+import { CampaignCharacterAttributeModel, CharacterInstanceAttributeValueModel, CharacterInstanceModel } from '../models/CharacterSchema.js'
+import { UserProfileModel } from '../../../../../../home/disgruntledgm/src/concourse-fl/concourse-server/models/UserProfileSchema.js'
+import { process_instance_for_user } from '../../../../../../home/disgruntledgm/src/concourse-fl/concourse-server/controllers/CharacterController.js'
 
 export const roles_to_perms = (roles) => {
     if(!roles){
@@ -84,8 +85,6 @@ export const roles_to_perms = (roles) => {
         }
     }
 
-    console.log(`Roles: ${JSON.stringify(roles)}\nPerms: ${JSON.stringify(perms)}`)
-
 
     return {
         view: perms.view.val,
@@ -97,29 +96,39 @@ export const roles_to_perms = (roles) => {
 }
 
 export const get_permissions = async (user, campaign) => {
-    console.log(`USER: ${JSON.stringify(user)}`)
+    const no_perms = {
+        view: false,
+        play: false,
+        start: false,
+        make_character: false,
+        administrate: false
+    }
+
+    if(!(user instanceof UserProfileModel)){
+        user = await UserProfileModel.findById(user)
+    }
+
+    if(!(campaign instanceof CampaignModel)){
+        campaign = await CampaignModel.findById(campaign)
+    }
+
     let roles = []
+
+    if(!(campaign && user)){
+        return no_perms
+    }
 
     await campaign.execPopulate('members')
     for(const member of campaign.members){
-        console.log(`MEMBER: ${JSON.stringify(member)}`)
-        console.log(`MID is ${member.user}; UID is ${user._id}`)
         if(String(member.user) === String(user._id)){
-            console.log(`ID match.`)
             await member.execPopulate('roles')
             roles = member.roles
+            break
         }
-        break
     }
 
     if(!roles){
-        return {
-            view: false,
-            play: false,
-            start: false,
-            make_character: false,
-            administrate: false
-        }
+        return no_perms
     }
 
     return roles_to_perms(roles)
@@ -132,12 +141,101 @@ export const add_user_to_campaign = async (user, campaign, init_roles) => {
         campaign: campaign._id
     })
 
-    campaign.members.push(user_member)
-
     await user_member.save()
-    await campaign.save()
 
     return user_member
+}
+
+export const process_campaign_for_user = async (user, campaign, member, include_instances = false) => {
+
+    if(!(user instanceof UserProfileModel)){
+        user = await UserProfileModel.findById(user)
+    }
+
+    if(!campaign instanceof CampaignModel){
+        campaign = await CampaignModel.findById(campaign)
+    }
+
+    if(!member){
+        member = await CampaignMemberModel.findOne({
+            user: user,
+            campaign: campaign._id
+        })
+    }
+
+    if(!(
+        user && campaign && member
+    )){
+        console.warn(`Invalid data passed to process_campaign_for_user (U: ${user}; C: ${campaign}; M: ${member})`)
+        return null
+    }
+
+    await campaign.populate('creator').populate('characters').populate('roles')
+        .populate('attributes').populate({
+            path: 'members',
+            populate: {
+                path: 'roles user'
+            }
+        }).execPopulate()
+    await member.execPopulate('roles')
+
+    const redone_perms = roles_to_perms(member.roles)
+
+    const insts = []
+
+    for(const inst of campaign.characters){
+        if(include_instances){
+            insts.push(await process_instance_for_user(inst, user, true, false))
+        }else{
+            insts.push(inst._id)
+        }
+    }
+
+    return {
+        members: campaign.members,
+        _id: campaign._id,
+        name: campaign.name,
+        description: campaign.description,
+        creator: campaign.creator,
+        roles: campaign.roles,
+        instances: insts,
+        attributes: campaign.attributes,
+        permissions: redone_perms
+    }
+}
+
+export const safe_delete_instance = async (instance) => {
+    if(!instance){
+        console.warn(`[CampaignController.js > safe_delete_instance()] Provided instance does not exist.`)
+        return
+    }
+
+    await instance.execPopulate('attributes')
+    for(const attribute of instance.attributes){
+        await CharacterInstanceAttributeValueModel.findByIdAndDelete(attribute._id)
+    }
+    await CharacterInstanceModel.findByIdAndDelete(instance._id)
+}
+
+export const safe_delete_member = async (member) => {
+    if(!member){
+        console.warn(`[CampaignController.js > safe_delete_member()] Provided member does not exist.`)
+        return
+    }
+
+    await member.populate({
+        path: 'campaign',
+        populate: 'characters'
+    }).execPopulate()
+
+    for(const instance of member.campaign.characters){
+        await instance.execPopulate('character')
+        if(instance.character.owner.toString() === member.user.toString()){
+            await safe_delete_instance(instance)
+        }
+    }
+
+    await CampaignMemberModel.findByIdAndDelete(member._id)
 }
 
 /* Create a new campaign
@@ -224,7 +322,7 @@ export const CreateCampaign = async (req, res, next) => {
     return res.status(200).json(new_campaign)
 }
 
-/* Retrieves all of a user's campaigns
+/* Retrieve all of a user's campaigns
  */
 export const RetrieveAllCampaigns = async (req, res, next) => {
 	if(!req.user){
@@ -236,37 +334,101 @@ export const RetrieveAllCampaigns = async (req, res, next) => {
     const memberObjects = await CampaignMemberModel.find({user: user_profile._id})
 
 	if(memberObjects && memberObjects.length > 0){
-        console.log(memberObjects)
-        // await memberObjects.execPopulate('roles')
         let campaigns = []
         for(const member of memberObjects){
-            console.log(member)
-            await member.execPopulate('roles')
-            const campaign = await CampaignModel.findOne({members: member._id})
-            await campaign.populate('creator').populate('roles').populate({
-                path: 'members',
-                populate: {
-                    path: 'roles user'
-                }
-            }).execPopulate()
-            const redone_perms = roles_to_perms(member.roles)
-            const camp_filtered = {
-                members: campaign.members,
-                _id: campaign._id,
-                name: campaign.name,
-                description: campaign.description,
-                creator: campaign.creator,
-                roles: campaign.roles,
-                permissions: redone_perms
+            await member.populate('campaign').execPopulate('roles')
+            if((await get_permissions(req.user.user, member.campaign)).view){
+                campaigns.push(await process_campaign_for_user(user_profile, member.campaign, member, true))
             }
-            console.log(`camp_filtered = ${camp_filtered}`)
-            campaigns.push(camp_filtered)
-        }
-        for(const camp of campaigns){
-            console.log(`campaign = ${camp}`)
         }
 		res.status(200).json(campaigns)
 	}else{
 		res.sendStatus(404)
 	}
+}
+
+/* Retrieve a single campaign by ID
+ */
+export const RetrieveCampaign = async (req, res, next) => {
+    if(!req.user){
+        return res.sendStatus(500)
+    }
+
+    if(!(
+        req.params.id
+    )){
+        return res.status(400).json({
+            reason: 'Missing required fields'
+        })
+    }
+
+    const campaign = await CampaignModel.findById(req.params.id)
+    const perms = await get_permissions(req.user.user, campaign)
+
+    if(!(
+        perms && 
+        perms.view
+    )){
+        return res.status(400).json({
+            reason: 'Campaign does not exist (or is private).'
+        })
+    }
+    
+    const campaign_processed = await process_campaign_for_user(req.user.user, campaign, null, true)
+    return res.status(200).json(campaign_processed)
+}
+
+export const CreateInstanceAttribute = async (req, res, next) => {
+    if(!req.user){
+        return res.sendStatus(500)
+    }
+
+    if(!(
+        req.params.id &&
+        req.body.name &&
+        req.body.type &&
+        req.body.description
+    )){
+        return res.status(400).json({
+            reason: 'Missing required fields'
+        })
+    }
+
+    const acceptable_types = ['number', 'string', 'boolean', 'object', 'jsonified_object', 'null']
+
+    if(!acceptable_types.includes(req.body.type)){
+        return res.status(400).json({
+            reason: 'Unknown type',
+            acceptable_types: acceptable_types
+        })
+    }
+
+    const campaign = await CampaignModel.findById(req.params.id)
+    const perms = await get_permissions(req.user.user, campaign)
+
+    if(!(
+        perms &&
+        perms.view
+    )){
+        return res.status(400).json({
+            reason: 'Campaign does not exist (or is private).'
+        })
+    }
+
+    if(!perms.administrate){
+        return res.status(403).json({
+            reason: 'You do not have permission to edit attributes for this campaign'
+        })
+    }
+
+    const attr = new CampaignCharacterAttributeModel({
+        campaign: campaign._id,
+        name: req.body.name,
+        type: req.body.type,
+        description: req.body.description
+    })
+
+    await attr.save()
+
+    return res.status(200).json(attr)
 }
