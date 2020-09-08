@@ -1,5 +1,5 @@
 /* City of Concourse Website - Landing Page View
-	Copyright 2019 Alex Isabelle Shuping
+	Copyright 2019, 2020 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ import logo from '../../assets/concourse-logo.svg'
 
 import './LandingPageView.css'
 
-function LandingPageView({set_title}){
+function LandingPageView({set_title, set_app_mode}){
 	useEffect(() => {
 		set_title("City of Concourse")
-	}, [set_title])
+		set_app_mode("nobg")
+		return () => {set_app_mode("main")}
+	}, [])
 
 	return <main className="main">
 		<div className="bg-parallax">

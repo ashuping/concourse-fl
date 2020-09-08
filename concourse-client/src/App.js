@@ -27,6 +27,7 @@ import CitizenVoicesView from './views/CitizenVoicesView/CitizenVoicesView'
 import LoginView from './views/LoginView/LoginView'
 import RegisterView from './views/RegisterView/RegisterView'
 import DashboardView from './views/DashboardView/DashboardView'
+import SessionView from './views/SessionView/SessionView'
 
 async function fetch_value(type, id, force, cache, set_cache){
 	switch(type){
@@ -82,104 +83,153 @@ async function fetch_value(type, id, force, cache, set_cache){
 	}
 }
 
+const tbar_modes = [
+	"main",
+	"nobg"
+]
+
 function App() {
 	const [cache, set_cache] = useState({})
 	const [title, set_title] = useState("City of Concourse")
+	const [mode, set_mode] = useState("main")
 
 	const fetch_wrapper = (type, id, force) => fetch_value(type, id, force, cache, set_cache)
 
 	return (
-		<Router>
-			<Header title={title} />
-			<Switch>
-				<Route exact path="/">
-					<LandingPageView 
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-					/>
-				</Route>
-				<Route path="/citizen-voices">
-					<CitizenVoicesView
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-					/>
-				</Route>
-				<Route path="/login">
-					<LoginView 
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-					/>
-				</Route>
-				<Route path="/register">
-					<RegisterView 
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-					/>
-				</Route>
-				<Route path="/dashboard">
-					<DashboardView 
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-						active_tab="campaigns"
-						props={null}
-					/>
-				</Route>
-				<Route path="/profile">
-					<DashboardView
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-						active_tab="profile"
-						props={null}
-					/>
-				</Route>
-				<Route path="/admin">
-					<DashboardView 
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-						active_tab="admin"
-						props={null}
-					/>
-				</Route>
-				<Route exact path="/campaigns/create">
-					<DashboardView 
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-						active_tab="campaign_create"
-						props={null}
-					/>
-				</Route>
-				<Route exact path="/campaigns/:cid" 
-					render={props => <DashboardView 
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-						active_tab="campaign_detail"
-						props={props}
-					/>}
-				/>
-				<Route exact path="/campaigns/:cid/characters/:charid/edit"
-					render={(props) => {
-						props.match.params.cmode = 'edit'
-						return <DashboardView 
-							cfetch={fetch_wrapper}
-							set_title={set_title}
-							active_tab="campaign_detail"
-							props={props}
+		<div className={`approot approot-${mode}`}>
+			<div className={"approot-body"}>
+				<Router>
+					{tbar_modes.includes(mode) ? <Header title={title} /> : null}
+					{tbar_modes.includes(mode) ? <div className="header-spacer" /> : null}
+					<Switch>
+						<Route exact path="/">
+							{/* <Header title={title} /> */}
+							<LandingPageView 
+								cfetch={fetch_wrapper}
+								set_title={set_title}
+								set_app_mode={set_mode}
+							/>
+						</Route>
+						<Route path="/citizen-voices">
+							{/* <Header title={title} /> */}
+							<CitizenVoicesView
+								cfetch={fetch_wrapper}
+								set_title={set_title}
+							/>
+						</Route>
+						<Route path="/login">
+							{/* <Header title={title} /> */}
+							<LoginView 
+								cfetch={fetch_wrapper}
+								set_title={set_title}
+								set_app_mode={set_mode}
+							/>
+						</Route>
+						<Route path="/register">
+							{/* <Header title={title} /> */}
+							<RegisterView 
+								cfetch={fetch_wrapper}
+								set_title={set_title}
+								set_app_mode={set_mode}
+							/>
+						</Route>
+						<Route path="/dashboard">
+							{/* <Header title={title} /> */}
+							<DashboardView 
+								cfetch={fetch_wrapper}
+								set_title={set_title}
+								active_tab="campaigns"
+								props={null}
+							/>
+						</Route>
+						<Route path="/profile">
+							{/* <Header title={title} /> */}
+							<DashboardView
+								cfetch={fetch_wrapper}
+								set_title={set_title}
+								active_tab="profile"
+								props={null}
+							/>
+						</Route>
+						<Route path="/admin">
+							{/* <Header title={title} /> */}
+							<DashboardView 
+								cfetch={fetch_wrapper}
+								set_title={set_title}
+								active_tab="admin"
+								props={null}
+							/>
+						</Route>
+						<Route exact path="/campaigns/create">
+							{/* <Header title={title} /> */}
+							<DashboardView 
+								cfetch={fetch_wrapper}
+								set_title={set_title}
+								active_tab="campaign_create"
+								props={null}
+							/>
+						</Route>
+						<Route exact path="/campaigns/:cid" 
+							render={props => <div>
+								{/* <Header title={title} /> */}
+								<DashboardView 
+									cfetch={fetch_wrapper}
+									set_title={set_title}
+									active_tab="campaign_detail"
+									props={props}
+								/>
+							</div>}
 						/>
-					}}
-				/>
-				<Route exact path="/campaigns/:cid/characters/new"
-				render={(props) => {
-					props.match.params.cmode = 'new'
-					return <DashboardView 
-						cfetch={fetch_wrapper}
-						set_title={set_title}
-						active_tab="campaign_detail"
-						props={props}
-					/>
-				}}
-			/>
-			</Switch>
-		</Router>
+						<Route exact path="/campaigns/:cid/characters/:charid/edit"
+							render={(props) => {
+								props.match.params.cmode = 'edit'
+								return <div>
+									{/* <Header title={title} /> */}
+									<DashboardView 
+										cfetch={fetch_wrapper}
+										set_title={set_title}
+										active_tab="campaign_detail"
+										props={props}
+									/>
+									</div>
+							}}
+						/>
+						<Route exact path="/campaigns/:cid/characters/new"
+							render={(props) => {
+								props.match.params.cmode = 'new'
+								return <div>
+									{/* <Header title={title} /> */}
+									<DashboardView 
+										cfetch={fetch_wrapper}
+										set_title={set_title}
+										active_tab="campaign_detail"
+										props={props}
+									/>
+								</div>
+							}}
+						/>
+						<Route exact path="/campaigns/:cid/sessions/start"
+							render={(props) => {
+								return <SessionView 
+									cid={props.match.params.cid}
+									sid={null}
+									setAppMode={set_mode}
+								/>
+							}}
+						/>
+						<Route exact path="/campaigns/:cid/sessions/:sid"
+							render={(props) => {
+								return <SessionView 
+									cid={props.match.params.cid}
+									sid={props.match.params.sid}
+									setAppMode={set_mode}
+								/>
+							}}
+						/>
+					</Switch>
+				</Router>
+			</div>
+		</div>
 	);
 }
 

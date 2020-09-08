@@ -1,5 +1,5 @@
 /* City of Concourse Website - Login page
-	Copyright 2019 Alex Isabelle Shuping
+	Copyright 2019, 2020 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import bg from '../../assets/starry-sky-bg.svg'
 
 import './LoginView.css'
 
-function LoginView({cfetch, set_title}){
+function LoginView({cfetch, set_title, set_app_mode}){
 	const [user, set_user] = useState(null)
 	const [login_warning, set_login_warning] = useState(null)
 
@@ -36,7 +36,9 @@ function LoginView({cfetch, set_title}){
 
 	useEffect(() => {
 		set_title("Log in")
-	}, [set_title])
+		set_app_mode("nobg")
+		return () => {set_app_mode("main")}
+	}, [])
 
 	useEffect(() => {
 		cfetch("user", "current", true).then(set_user)

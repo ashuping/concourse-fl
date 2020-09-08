@@ -1,5 +1,5 @@
 /* City of Concourse Website - Campaign Controller
-	Copyright 2019 Alex Isabelle Shuping
+	Copyright 2019, 2020 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 import { CampaignModel, CampaignMemberModel, CampaignRoleModel } from '../models/CampaignSchema.js'
 import { CampaignCharacterAttributeModel, CharacterInstanceAttributeValueModel, CharacterInstanceModel } from '../models/CharacterSchema.js'
-import { UserProfileModel } from '../../../../../../home/disgruntledgm/src/concourse-fl/concourse-server/models/UserProfileSchema.js'
-import { process_instance_for_user } from '../../../../../../home/disgruntledgm/src/concourse-fl/concourse-server/controllers/CharacterController.js'
+import { UserProfileModel } from '../models/UserProfileSchema.js'
+import { process_instance_for_user } from './CharacterController.js'
 
 export const roles_to_perms = (roles) => {
     if(!roles){

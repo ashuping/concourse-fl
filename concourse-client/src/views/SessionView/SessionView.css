@@ -1,0 +1,123 @@
+/* html {
+    height: 100%;
+}
+
+body {
+    background-color: #1a1a1F;
+    height: 100%;
+    padding-top: 0;
+    overflow: hidden;
+} */
+
+:root {
+    --ses-bg: #1a1a1f;
+    --ses-fg: #fff;
+
+    --ses-red: #ff4444;
+    --ses-grn: #55dd55;
+    --ses-blu: #4444ff;
+}
+
+.approot-session {
+    background-color: var(--ses-bg);
+    color: var(--ses-fg);
+    height: 100%;
+    padding-top: 0;
+}
+
+.approot-session > .approot-body {
+    height: 100%;
+}
+
+.sess-view {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto 50% auto;
+    grid-template-rows: auto 50% auto;
+}
+
+.sess-view-main {
+    grid-row: 2;
+    grid-column: 2;
+    border: 1px solid var(--ses-fg);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.sess-view-item {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+h1.sess-view-item {
+    margin: auto;
+    padding: 0;
+    font-variant: small-caps;
+}
+
+
+@keyframes connecting {
+    0%   {color:var(--ses-bg);}
+    50%  {color:var(--ses-blu);}
+    100% {color:var(--ses-bg);}
+}
+
+@keyframes genning {
+    0%   {color:var(--ses-bg); transform: rotate(0deg);}
+    25%  {transform: rotate(90deg);}
+    50%  {color:var(--ses-grn); transform: rotate(180deg);}
+    75%  {transform: rotate(270deg);}
+    100% {color:var(--ses-bg); transform: rotate(360deg);}
+}
+
+@keyframes loading {
+    0%   {color:var(--ses-blu); transform: rotate(0deg);}
+    25%  {transform: rotate(90deg);}
+    27%  {color: var(--ses-blu);}
+    33%  {color:var(--ses-red);}
+    50%  {transform: rotate(180deg);}
+    60%  {color: var(--ses-red);}
+    66%  {color: var(--ses-grn);}
+    75%  {transform: rotate(270deg);}
+    94%  {color: var(--ses-grn);}
+    100% {color:var(--ses-blu); transform: rotate(360deg);}
+}
+
+@keyframes failed {
+    0%   {color:var(--ses-bg);}
+    50%  {color:var(--ses-red);}
+    100% {color:var(--ses-bg);}
+}
+
+.sess-view-loader{
+    margin: auto;
+    flex: 1 1 auto;
+}
+
+.sess-view-loader svg {
+    animation: failed 1.5s linear 0s infinite;
+    width: 5em;
+    height: 5em;
+    margin: auto;
+    transition: all 0.2s;
+}
+
+.sess-view-loader.sv-connecting svg {
+    animation-name: connecting;
+}
+
+.sess-view-loader.sv-genning svg {
+    animation-name: genning;
+}
+
+.sess-view-loader.sv-loading svg {
+    animation-name: loading;
+}
+
+.sess-view-loader.sv-failed svg {
+    animation-name: connecting;
+}

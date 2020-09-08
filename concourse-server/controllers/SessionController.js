@@ -1,5 +1,5 @@
-/* City of Concourse Website - Backend connection utilities
-	Copyright 2019 Alex Isabelle Shuping
+/* City of Concourse Website - Session Controller
+	Copyright 2020 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -14,14 +14,3 @@
 	limitations under the License.
  */
 
-function Backend(){
-	return window.location.origin
-}
-
-async function Delay(time){
-	return new Promise((resolve, reject) => {
-		setTimeout(() => {resolve()}, time)
-	})
-}
-
-export { Backend, Delay }

@@ -1,5 +1,5 @@
 /* City of Concourse Website - Registration page
-	Copyright 2019 Alex Isabelle Shuping
+	Copyright 2019, 2020 Alex Isabelle Shuping
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ const pronouns_he_him = {
 
 const mail_regex = /^(?=[A-Z0-9][A-Z0-9@._%+-]{5,253}$)[A-Z0-9._%+-]{1,64}@(?:(?=[A-Z0-9-]{1,63}\.)[A-Z0-9]+(?:-[A-Z0-9]+)*\.){1,8}[A-Z]{2,63}$/i
 
-function RegisterView({cfetch, set_title}){
+function RegisterView({cfetch, set_title, set_app_mode}){
 	const [user, set_user] = useState(null)
 	const [reg_warning, set_reg_warning] = useState(null)
 	const [regcode_required, set_regcode_required] = useState(false)
@@ -73,7 +73,9 @@ function RegisterView({cfetch, set_title}){
 
 	useEffect(() => {
 		set_title("New User Registration")
-	}, [set_title])
+		set_app_mode("nobg")
+		return () => {set_app_mode("main")}
+	}, [])
 
 	useEffect(() => {
 		cfetch("user", "current", true).then(set_user)

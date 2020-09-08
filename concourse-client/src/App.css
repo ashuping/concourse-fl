@@ -94,8 +94,7 @@
 }
 
 html, body {
-	margin: 0;
-	height: calc( 100% - 1.25em );
+	height: 100%;
 }
 
 svg {
@@ -106,10 +105,27 @@ svg {
 	height: 100%;
 }
 
-body{
-	padding-top: 2.5em;
+.approot{
+	margin: 0;
+	min-height: 100%;
+}
+
+/* .approot-<mode>: Whole-page styles for page mode `mode`
+ * These are used to control things like:
+ *   * Page background color
+ *   * Whether space is left at the top of the page for the header
+ * 
+ * These are usually defined in the .css file corresponding to whatever
+ * is changing the mode (e.g. `.approot-session` is defined in
+ * `SessionView.css`).
+ */
+.approot-main {
 	background-color: var(--default-bg);
-	color: var(--default-text)
+	color: var(--default-text);
+}
+
+.approot-nobg {
+	color: var(--default-text);
 }
 
 a{
@@ -130,6 +146,10 @@ a:hover{
 	position: fixed;
 	top: 0;
 	width: 100%;
+}
+
+.header-spacer {
+	height: 2.5em;
 }
 
 .header table{
