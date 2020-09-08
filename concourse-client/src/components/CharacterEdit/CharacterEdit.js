@@ -9,7 +9,6 @@ import ComplexTextEditor from '../ComplexTextEditor/ComplexTextEditor.js'
 import { CreateCharacter, EditCharacter, SetAttribute, DeleteCharacter, DeleteInstance } from '../../util/Characters.js'
 
 import './CharacterEdit.css'
-import { Trash } from 'react-feather'
 
 function CharacterEdit({user, init_char, campaign}){
     const [can_edit_personal_details, set_can_edit_personal_details] = useState(true)
@@ -94,6 +93,10 @@ function CharacterEdit({user, init_char, campaign}){
     }, [init_char])
 
     async function do_save(){
+        if(status !== SBStatus.READY){
+            return
+        }
+
         let res = null
         if(init_char && can_edit_personal_details){
             res = await EditCharacter(
