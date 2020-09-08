@@ -98,7 +98,8 @@ export async function GenCampaignInvite(
 export async function CreateCampaignAttribute(
 	name,
 	description,
-	campaign_id
+	campaign_id,
+	type
 ){
 	const res = await fetch(`${Backend()}/api/v1/campaigns/${campaign_id}/attributes/new`, {
 		method: 'POST',
@@ -109,9 +110,14 @@ export async function CreateCampaignAttribute(
 		credentials: 'same-origin',
 		body: JSON.stringify({
 			name: name,
+			type: type,
 			description: description
 		})
 	})
 
 	return res
+}
+
+export function GetAttributeTypes(){
+	return ['number', 'string', 'boolean']
 }

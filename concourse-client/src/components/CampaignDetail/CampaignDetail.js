@@ -17,12 +17,13 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Power, Play, MinusCircle, Slash, User } from 'react-feather'
+import { EditorState, convertToRaw } from 'draft-js'
 
 import { IField_Flexbox } from '../IField/IField.js'
 import StatusButton, { SBStatus } from '../StatusButton/StatusButton.js'
 import ToggleElem from '../ToggleElem/ToggleElem.js'
-import { GetOneCampaign, GenCampaignInvite } from '../../util/Campaigns.js'
-import { CTERenderer } from '../ComplexTextEditor/ComplexTextEditor.js'
+import { GetOneCampaign, GenCampaignInvite, CreateCampaignAttribute, GetAttributeTypes } from '../../util/Campaigns.js'
+import ComplexTextEditor, { CTERenderer } from '../ComplexTextEditor/ComplexTextEditor.js'
 
 import CharacterList from '../CharacterList/CharacterList.js'
 import CharacterEdit from '../CharacterEdit/CharacterEdit.js'
@@ -224,6 +225,108 @@ function InviteButton({campaign}){
     </div>
 }
 
+function AdminSection({campaign}){
+    const [att_name, set_att_name] = useState("")
+    const [att_desc, set_att_desc] = useState(EditorState.createEmpty())
+    const [status, set_status] = useState(null)
+    const [btn_err_text, set_btn_err_text] = useState("Error!")
+    const [active_type, set_active_type] = useState(null)
+
+    let btn_status = SBStatus.DISABLED
+    if(status !== null){
+        btn_status = status
+    }else{
+        if(att_name.length > 0){
+            btn_status = SBStatus.READY
+        }
+    }
+
+    let attributes_section = null
+    if(campaign.attributes){
+        const attributes_list = campaign.attributes.map((attrib) => {
+            return <div 
+                className="admin-section-attrib-elem"
+                key={attrib._id}
+            >
+                <span className="asae-name">{attrib.name}</span>
+                <span className="asae-type">{attrib.attType}</span>
+            </div>
+        })
+        attributes_section = <div className="admin-section-attributes">{attributes_list}</div>
+    }
+
+    const types = GetAttributeTypes()
+    const types_objs = types.map((type) => {
+        return <option key={type} value={type}>{type}</option>
+    })
+
+    async function make_new_attr(){
+        if(btn_status !== SBStatus.READY){
+            return
+        }
+
+        set_status(SBStatus.WORKING)
+
+        const res = await CreateCampaignAttribute(
+            att_name,
+            JSON.stringify(convertToRaw(att_desc.getCurrentContent())),
+            campaign._id,
+            (active_type ? active_type : types[0])
+        )
+
+        if(res.status === 200){
+            set_status(SBStatus.DONE)
+            setTimeout(() => {
+                set_status(null)
+                set_att_name("")
+                set_att_desc(EditorState.createEmpty())
+            })
+        }else{
+            set_status(SBStatus.FAILED)
+            const rj = await res.json()
+            if(rj && rj.reason){
+                set_btn_err_text(rj.reason)
+            }
+        }
+    }
+
+    return <div className="campaign-detail-admin-section std-form">
+        <h1>Administration</h1>
+        <h2>Attributes</h2>
+        {attributes_section}
+        <h2>New Attribute</h2>
+
+        <IField_Flexbox
+            changeCallback={(event) => set_att_name(event.target.value)}
+            good={att_name.length > 0}
+            name="Name"
+            help_text="Attribute Name"
+            good_text=""
+            bad_text=""
+        />
+
+        <h3>Description</h3>
+        <ComplexTextEditor
+            cte_state={att_desc}
+            set_cte_state={set_att_desc}
+        />
+
+        <h3>Type</h3>
+        <select value={types[0]} onChange={(event) => {set_active_type(event.target.value)}}>
+            {types_objs}
+        </select>
+
+        <StatusButton 
+            onClick={make_new_attr}
+            status={btn_status}
+            ready_text="Add New Attribute"
+            working_text="Working..."
+            done_text="Finished"
+            failed_text={btn_err_text}
+        />
+    </div>
+}
+
 function CampaignDetail({user, params}){
     const [campaign, set_campaign] = useState(null)
     const [load_done, set_load_done] = useState(false)
@@ -281,6 +384,7 @@ function CampaignDetail({user, params}){
             {campaign.permissions.administrate ? <InviteButton campaign={campaign} /> : null}
             <h1>Recent Sessions</h1>
             <p>somebody</p>
+            {campaign.permissions.administrate ? <AdminSection campaign={campaign} /> : null}
         </div>
     </div>
 }
