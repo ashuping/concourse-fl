@@ -27,7 +27,18 @@ export default {
 	// Port to run the server on
 	port: 5000, // PORT
 
+	// UUID for this node. If the backend is run on multiple nodes, this will
+	// be used to differentiate them in logs (it is also used to determine
+	// which node is handling a particular session).
+	node_id: 'b6bba423-bde8-40b3-a03b-6a1b1d5576cc', // NODE_ID
+
+	// Path to the files that should be served when the user access a
+	// path other than /api/v<whatever>. This should usually point to a
+	// production build of the concourse-client frontend.
 	client_files_path: 'concourse-client/build', // CLIENT_FILES_PATH
+
+	// The URL at which this server can be accessed.
+	bind_url: 'concourse.city' // BIND_URL,
 
 	registration: {
 		// Determines the minimum length required for a user-created invite key.

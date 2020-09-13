@@ -30,6 +30,7 @@ import user_router from './routes/UserRoutes.js'
 import campaign_router from './routes/CampaignRoutes.js'
 import registration_key_router from './routes/RegistrationKeyRoutes.js'
 import character_router from './routes/CharacterRoutes.js'
+import session_router from './routes/SessionRoutes.js'
 
 import { UserLoginModel } from './models/UserLoginSchema.js'
 import { UserProfileModel } from './models/UserProfileSchema.js'
@@ -181,6 +182,7 @@ app.use('/api/v1/users', user_router)
 app.use('/api/v1/campaigns', campaign_router)
 app.use('/api/v1/invites', registration_key_router)
 app.use('/api/v1/characters', character_router)
+app.use('/api/v1/sessions', session_router)
 app.use(express.static(process.env.CLIENT_FILES_PATH || config.client_files_path))
 
 // catch 404 and forward to error handler

@@ -23,42 +23,75 @@ const ObjectId = mongoose.ObjectId
  *   /\
  *   ||
  *   ||
- * Campaign
+ * Campaign*
  */
 
+/* Stores a single log entry for an event during the session.
+ * 
+ * `involved_users` should contain any users which are involved in the log
+ * entry.
+ */
 const SessionLogEntrySchema = new Schema({
     session: {
         type: ObjectId,
         ref: 'Session',
         required: true
     },
-    involved_users: {
-        type: [{type: ObjectId, ref: 'UserProfile'}],
+    timestamp: {
+        type: Date,
+        default: Date.now
+    },
+    event_id: {
+        type: Number,
         required: true
     },
-    text: {
+    entry: {
         type: String,
         required: true
-    }
-}, {
-    timestamps: {
-        createdAt: 'log_time'
+    },
+    involved_users: {
+        type: [{
+            type: ObjectId,
+            ref: 'UserProfile'
+        }]
     }
 })
 
+/* Stores a session object.
+ * 
+ * `log` is a virtual attribute compiling the log entries associated with this
+ * session.
+ */
 const SessionSchema = new Schema({
     campaign: {
         type: ObjectId,
         ref: 'Campaign',
         required: true
     },
-    url: {
-        type: String,
-        required: true
-    },
+
     active: {
         type: Boolean,
         required: true
+    },
+
+    /* URL that can be used to access the active session.
+     * 
+     * Should be in the form `wss://somewhere.biz/rest/of/the/url`
+     * 
+     * This parameter should only be present if the session is active.
+     */
+    url: {
+        type: String,
+        required: false
+    },
+
+    /* Node UUID of the node on which the session is running.
+     * 
+     * This parameter should only be present if the session is active.
+     */
+    active_node_id: {
+        type: String,
+        required: false
     }
 })
 

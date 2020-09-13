@@ -21,30 +21,48 @@ import { Backend, Delay } from './Connect'
  * done by symlinking the file from `common` into appropriate locations in both
  * the `concourse-client` and `concourse-server` directories.
  */
-import { MSG, pkt, dpkt } from './WSDefs.js'
+import { MSG, pkt, dpkt } from './WSDefs.mjs'
 
 export async function GetSession(
     sid
 ){
-    console.log(`Get session ID ${sid}`)
-    await Delay(1000)
-    return {
-        url: 'ws://localhost:4444/join/IdentifierStringGoesHere'
+    const gotSession = await fetch(`${Backend()}/api/v1/sessions/${sid}`, {
+        credentials: 'same-origin'
+    })
+
+    if(gotSession.status !== 200){
+        console.error(`Tried to get a session, but the result was ${gotSession.status}!`)
     }
+
+    return gotSession
 }
 
 export async function StartSession(
 	cid
 ){
-    console.log(`Start session for campaign ${cid}`)
-    await Delay(2000)
-    return 'SessionIDGoesHere'
+    const newSesData = await fetch(`${Backend()}/api/v1/sessions/new`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            campaign: cid
+        })
+    })
+
+    if(newSesData.status !== 200){
+        console.error(`Tried to create a session, but the result was ${newSesData.status} (${await newSesData.json()})!`)
+    }
+
+    return newSesData
 }
 
 export async function ConnectSession(
-    url
+    sock
 ){
-    console.log(`Connect to ${url}`)
+    console.log(`Connect to socket ${sock}`)
     await Delay(3000)
 }
 

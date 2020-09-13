@@ -53,19 +53,19 @@ export const process_char_for_user = async (char, user, include_instances = true
 
 	if(include_instances){
 		char_proc.instances = []
-	}
 
-	// Construct a list of campaigns that the user has at least 'view' access to
-	await user.execPopulate({
-		path: 'members',
-		populate: 'campaign'
-	})
-	const valid_campaigns_for_user = (await Promise.all(user.members.filter(async (mem) => {
-		return ((await get_permissions(user, mem.campaign)).view)
-	}))).map((mem) => mem.campaign._id.toString())
+		// Construct a list of campaigns that the user has at least 'view' access to
+		await user.execPopulate({
+			path: 'members',
+			populate: 'campaign'
+		})
 
-	if(include_instances){
+		const valid_campaigns_for_user = (await Promise.all(user.members.filter(async (mem) => {
+			return ((await get_permissions(user, mem.campaign)).view)
+		}))).map((mem) => mem.campaign._id.toString())
+
 		await char.execPopulate('instances')
+
 		const instances_filtered = await Promise.all(char.instances.filter((inst) => {
 			// Only include instances for campaigns that the user can view
 			return (valid_campaigns_for_user.includes(inst.campaign.toString()))
@@ -90,7 +90,7 @@ export const process_instance_for_user = async (instance, user, include_characte
 
 	const inst_proc = {
 		_id: instance._id,
-		campaign: (populate_campaign ? await process_campaign_for_user(instance.character.owner, instance.campaign) : instance.campaign._id),
+		campaign: (populate_campaign ? await process_campaign_for_user(user, instance.campaign) : instance.campaign._id),
 		attributes: []
 	}
 

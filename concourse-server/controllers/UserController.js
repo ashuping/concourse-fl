@@ -137,7 +137,10 @@ export const validate_campaigns = async (campaigns) => {
 }
 
 export const process_user_for_user = async (requested_user, requesting_user) => {
-	if(requested_user._id.toString() === requesting_user._id.toString()){
+	if(
+		requesting_user
+		&& requested_user._id.toString() === requesting_user._id.toString()
+	){
 		return requested_user
 	}else{
 		return {
