@@ -40,6 +40,7 @@ import { send_mail, setup } from './controllers/MailController.js'
 
 import './passport.js'
 import { EmailModel } from './models/EmailSchema.js'
+import { SessionModel } from './models/SessionSchema.js'
 
 var app = express()
 
@@ -160,6 +161,25 @@ async function initial_run_check(){
 	return false
 }
 
+async function clean_up_orphan_sessions(){
+	const orphanSessions = await SessionModel.find({
+		active: true,
+		active_node_id: (process.env.NODE_ID || config.node_id)
+	})
+
+	if(orphanSessions){
+		console.log(`Found orphaned sessions! Did the server shut down unexpectedly? Cleaning up...`)
+	}
+
+	for(const session of orphanSessions){
+		session.active = false
+		session.url = null
+		session.active_node_id = null
+
+		await session.save()
+	}
+}
+
 initial_run_check()
 	.then((changed) => {
 		if(changed){
@@ -169,6 +189,8 @@ initial_run_check()
 	.catch((err) => {
 		console.error(`Failed to perform the initial user check: ${err}`)
 	})
+
+clean_up_orphan_sessions()
 
 app.use(logger('dev'));
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));

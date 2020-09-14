@@ -33,6 +33,7 @@ body {
     width: 100%;
     height: 100%;
     display: grid;
+    overflow: hidden;
     grid-template-columns: auto 50% auto;
     grid-template-rows: auto 50% auto;
 }
@@ -44,6 +45,123 @@ body {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
+}
+
+.sess-view-panel {
+    border: 1px solid var(--ses-fg);
+}
+
+.sess-view-lefpanel {
+    grid-row-start: 1;
+    grid-row-end: 3;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sess-view-botpanel {
+    grid-row: 3;
+    grid-column-start: 2;
+    grid-column-end: 4;
+}
+
+.sess-view-bfield {
+    grid-row-start: 1;
+    grid-row-end: 3;
+    grid-column-start: 2;
+    grid-column-end: 4;
+}
+
+.sess-view-chatbox {
+    grid-row: 3;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sess-view-battlegrid {
+    display: grid;
+    padding: 1em;
+    transition: transform 0.5s;
+    column-gap: 0.5em;
+    row-gap: 0.5em;
+}
+
+.sess-view-battlegrid-3d {
+    transform: perspective(50em) rotate3d(1, 0, 0, 45deg) scale(0.75);
+}
+
+.sess-view-battlegrid-3d:hover {
+    transform: none;
+}
+
+.SVBGSquare::before {
+    content: "";
+    display: inline-block;
+    width: 1px;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+  }
+
+.SVBGSquare {
+    position: relative;
+    margin: 0.5em;
+    border: 2px solid var(--ses-fg);
+    width: 100%;
+}
+
+.SVBGSquare-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: grid;
+    align-items: center;
+    text-align: center;
+}
+
+.SVBGS-red {
+    border-color: var(--ses-red);
+}
+
+.SVBGS-green {
+    border-color: var(--ses-grn);
+}
+
+.SVBGS-blue {
+    border-color: var(--ses-blu);
+}
+
+.sess-chatbox-msg-history {
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.sess-chatbox-msg-line {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    height: min-content;
+    width: 100%;
+}
+
+.sess-chatbox-chat-symbol {
+    flex: 0 0 auto;
+}
+
+.sess-chatbox-input {
+    flex: 1 1 auto;
+    width: 100%;
+    background-color: var(--ses-bg);
+    color: var(--ses-fg);
 }
 
 .sess-view-item {

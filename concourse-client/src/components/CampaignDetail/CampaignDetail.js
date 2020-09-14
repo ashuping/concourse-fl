@@ -32,20 +32,21 @@ import './CampaignDetail.css'
 
 function CDTopbar({campaign}){
     const name_text = `${campaign.creator.username} / ${campaign.name}`
-    let session_endpoint = campaign.session_in_progress
+    let session_endpoint = null
     let clickable = false
     let link_state = "inactive"
     let status_text = "Offline"
     let join_text = ""
     let join_icon = <MinusCircle />
 
-    if(campaign.session_in_progress){
+    if(campaign.active){
         status_text = "Running"
         if(campaign.permissions.play){
             join_text = "Click to Join"
             join_icon = <Play />
             link_state = "active"
             clickable = true
+            session_endpoint = campaign.sessions[0]
         }else{
             join_icon = <Slash />
         }

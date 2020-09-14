@@ -84,15 +84,27 @@ export const MSG = {
     GAME_SPEED_SET: 0x0313,
     GRACE_TIME_SET: 0x0314,
 
+    NEW_CHARACTER_REQ: 0x0315,
+    NEW_CHARACTER_CONFIRM: 0x8315,
+    NEW_CHARACTER_INVALID_ATTRIBUTES: 0x03F1,
+
     ACTION_NOTICE: 0x0380,
     FIRE_ACTION: 0x8380,
     ACTED_TOO_EARLY: 0x03F0,
-    ACTED_WHILE_PAUSED: 0x03F1,
+    ACTED_WHILE_PAUSED: 0x03F2,
 
     PAUSE_NOTICE: 0x0381,
     FIRE_PAUSE: 0x8381,
     RESUME_NOTICE: 0x0382,
     FIRE_RESUME: 0x8382,
+
+
+    /* ========================================================================
+     * == 0x0400 - Chat
+     * ========================================================================
+     */
+    FIRE_CHAT_MESSAGE: 0x8400,
+    CHAT_MESSAGE: 0x0400,
 
 
     /* ========================================================================
@@ -137,6 +149,7 @@ export function msgColor(msg){
         case MSG.CHARACTER_INFO_SET:
         case MSG.GAME_SPEED_SET:
         case MSG.GRACE_TIME_SET:
+        case MSG.NEW_CHARACTER_REQ:
             return '\x1b[32m'
 
         case MSG.FIRE_ACTION:
@@ -154,12 +167,17 @@ export function msgColor(msg){
         case MSG.ACTION_NOTICE:
         case MSG.PAUSE_NOTICE:
         case MSG.RESUME_NOTICE:
+        case MSG.NEW_CHARACTER_CONFIRM:
             return '\x1b[35m'
 
         case MSG.ACTED_TOO_EARLY:
         case MSG.ACTED_WHILE_PAUSED:
+        case MSG.NEW_CHARACTER_INVALID_ATTRIBUTES:
             return '\x1b[43m'
-            
+
+        case MSG.FIRE_CHAT_MESSAGE:
+        case MSG.CHAT_MESSAGE:
+            return '\x1b[1;38;5;75m'
 
         case MSG.UNAUTHORIZED:
             return '\x1b[31m'
@@ -221,6 +239,13 @@ export function msgStr(msg){
             return `GAME_SPEED_SET`
         case MSG.GRACE_TIME_SET:
             return `GRACE_TIME_SET`
+        
+        case MSG.NEW_CHARACTER_REQ:
+            return `NEW_CHARACTER_REQ`
+        case MSG.NEW_CHARACTER_CONFIRM:
+            return `NEW_CHARACTER_CONFIRM`
+        case MSG.NEW_CHARACTER_INVALID_ATTRIBUTES:
+            return `NEW_CHARACTER_INVALID_ATTRIBUTES`
             
         case MSG.ACTION_NOTICE:
             return `ACTION_NOTICE`
@@ -239,6 +264,11 @@ export function msgStr(msg){
             return `RESUME_NOTICE`
         case MSG.FIRE_RESUME:
             return `FIRE_RESUME`
+
+        case MSG.FIRE_CHAT_MESSAGE:
+            return `FIRE_CHAT_MESSAGE`
+        case MSG.CHAT_MESSAGE:
+            return `CHAT_MESSAGE`
 
         case MSG.CLIENT_PROTOCOL_FAULT:
             return `CLIENT_PROTOCOL_FAULT`

@@ -5,8 +5,9 @@ import { Loader } from 'react-feather'
 
 import { GetOneCampaign } from '../../util/Campaigns.js'
 import { GetSession, StartSession, ConnectSession } from '../../util/Sessions.js'
-import { MSG, pkt, dpkt } from '../../util/WSDefs.mjs'
+import { MSG, pkt, depkt, stdCodeNumberPrint, msgColor, msgStr } from '../../util/WSDefs.mjs'
 
+import SVMainView from './SVMainView/SVMainView.js'
 // import SessionStart from './SessionStart/SessionStart.js'
 
 import './SessionView.css'
@@ -55,6 +56,7 @@ function SessionView({cid, sid, setAppMode}){
     const [sock_url, set_sock_url] = useState(null)
     const [redir, do_redir] = useState(null)
     const [peers, set_peers] = useState([])
+    const [chatMessages, setChatMessages] = useState([])
 
     const close_cb = function(closeEvent){
         // The websocket should be open in the LOADING_SESSION or
@@ -81,13 +83,23 @@ function SessionView({cid, sid, setAppMode}){
     }, [])
 
     useEffect(() => {
-        console.log(lastMessage)
         if(!lastMessage){return}
-        const msg = JSON.parse(lastMessage.data)
+        const msg = depkt(lastMessage.data)
+        console.log(`RECV ${stdCodeNumberPrint(msg.msg)} ${msgStr(msg.msg)}`)
+        console.log(msg)
+
         switch(msg.msg){
             case MSG.PEER_CONNECTED:
                 set_peers(peers.concat(msg.peer))
                 break
+            case MSG.PLAYER_INFO_PUSH:
+                set_peers(msg.players)
+                if(slstate === SessionLoadState.LOADING_SESSION){
+                    set_slstate(SessionLoadState.READY)
+                }
+                break
+            case MSG.CHAT_MESSAGE:
+                setChatMessages([msg].concat(chatMessages))
             default:
                 break
         }
@@ -142,10 +154,18 @@ function SessionView({cid, sid, setAppMode}){
         case SessionLoadState.ERROR:
             return <SVLoadView lstate={slstate} text={err_text} />
         case SessionLoadState.READY:
-            return <div>
-                <h1>Connected peers:</h1>
-                {peerList}
-            </div>
+            return <SVMainView 
+                chatMessages={chatMessages}
+                sendChatMessage={(msg) => {
+                    sendMessage(pkt(
+                        MSG.FIRE_CHAT_MESSAGE,
+                        {
+                            chat: msg
+                        }
+                    ))
+                }}
+                peers={peers}
+            />
             // return <SVLoadView lstate={slstate} text="Done!" />
         default:
             return <SVLoadView lstate={slstate} text="Unknown state!" />

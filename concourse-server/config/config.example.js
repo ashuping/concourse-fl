@@ -38,7 +38,7 @@ export default {
 	client_files_path: 'concourse-client/build', // CLIENT_FILES_PATH
 
 	// The URL at which this server can be accessed.
-	bind_url: 'concourse.city' // BIND_URL,
+	bind_url: 'concourse.city', // BIND_URL,
 
 	registration: {
 		// Determines the minimum length required for a user-created invite key.

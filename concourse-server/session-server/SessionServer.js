@@ -13,6 +13,8 @@ export const SLEVT = {
     CONNECTION: 2,
     DISCONNECT: 3,
     ENDED: 4,
+
+    CHAT: 5,
 }
 
 
@@ -308,6 +310,10 @@ export class Session {
         return this.#_session.url
     }
 
+    get campaign(){
+        return this.#_session.campaign
+    }
+
     /* Start a session
      * 
      * This method will perform the following steps:
@@ -480,7 +486,9 @@ export class Session {
 
         const playerInfo = []
         for(const client of this.#_clients){
-            playerInfo.push(await process_user_for_user(client.user, null))
+            const procUser = await process_user_for_user(client.user, null)
+            procUser.scid = client.scid
+            playerInfo.push(procUser)
         }
 
         await this.sendToMany(targets, pkt(MSG.PLAYER_INFO_PUSH, {
@@ -531,6 +539,29 @@ export class Session {
         await this.timerSync(targets)
     }
 
+    /* Send a chat message to one or more clients.
+     */
+    async doChat(message, source, targets){
+        if(!targets){
+            targets = []
+        }
+        await this.log(SLEVT.CHAT, `Chat from ${source.scid}: ${message}`, [source.user._id].concat(targets.map((t) => t.user._id)))
+        if(targets.length === 0){
+            await this.broadcast(pkt(MSG.CHAT_MESSAGE, {
+                'source': source.scid,
+                'private': false,
+                'chat': message
+            }))
+        }else{
+            await this.sendToMany(targets, pkt(MSG.CHAT_MESSAGE, {
+                'source': source.scid,
+                'private': true,
+                'targets': targets.map((t) => t.scid)
+            }))
+        }
+
+    }
+
     async onClientClose(client, code, reason){
         for(let index = 0; index < this.#_clients.length; index++){
             if(this.#_clients[index] === client){
@@ -563,6 +594,12 @@ export class Session {
             case MSG.GRACE_TIME_REQ:
                 this.pushGraceTime([client])
                 break
+            case MSG.FIRE_CHAT_MESSAGE:
+                let targets = []
+                if('targets' in decodedData){
+                    targets = decodedData.targets
+                }
+                this.doChat(decodedData.chat, client, targets)
             case MSG.FIRE_ACTION:
                 break
             default:
@@ -608,7 +645,7 @@ export async function genSession(campaign, startingUser){
     const newSession = await Session.build(campaign._id, startingUser._id)
 
     let sesUrl = (process.env.BIND_URL || config.bind_url)
-    sesUrl = `ws://${sesUrl}/api/v1/sessions/${newSession._id}/join`
+    sesUrl = `wss://${sesUrl}/api/v1/sessions/${newSession._id}/join`
 
     await newSession.start(sesUrl, startingUser)
 

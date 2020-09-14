@@ -171,7 +171,7 @@ export const process_campaign_for_user = async (user, campaign, member, include_
     }
 
     await campaign.populate('creator').populate('characters').populate('roles')
-        .populate('attributes').populate({
+        .populate('attributes').populate('activeSessions').populate({
             path: 'members',
             populate: {
                 path: 'roles user'
@@ -191,7 +191,7 @@ export const process_campaign_for_user = async (user, campaign, member, include_
         }
     }
 
-    return {
+    const procStruct = {
         members: campaign.members,
         _id: campaign._id,
         name: campaign.name,
@@ -202,6 +202,17 @@ export const process_campaign_for_user = async (user, campaign, member, include_
         attributes: campaign.attributes,
         permissions: redone_perms
     }
+
+    if(redone_perms.play){
+        if(campaign.activeSessions && campaign.activeSessions.length !== 0){
+            procStruct['active'] = true
+            procStruct['sessions'] = campaign.activeSessions.map((session) => session._id)
+        }else{
+            procStruct['active'] = false
+        }
+    }
+    
+    return procStruct
 }
 
 export const safe_delete_instance = async (instance) => {

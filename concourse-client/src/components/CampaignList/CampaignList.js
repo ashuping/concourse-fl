@@ -26,8 +26,8 @@ import './CampaignList.css'
 function CampaignListElem({campaign}){
     let join_box = null
 
-    if(campaign.session_in_progress && campaign.permissions.play){
-        const link_dst = "/campaigns/" + campaign._id + "/sessions/" + campaign.session_in_progress
+    if(campaign.active && campaign.permissions.play){
+        const link_dst = "/campaigns/" + campaign._id + "/sessions/" + campaign.sessions[0]
         join_box = <div className="campaign-in-progress-box">
                 <span className="campaign-box-text">Session In Progress</span> <Link to={link_dst} className="campaign-button" target="_blank">Join</Link>
             </div>

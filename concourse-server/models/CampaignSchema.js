@@ -85,6 +85,7 @@ const CampaignSchema = new Schema({
      *   - characters
      *   - attributes
      *   - roles
+     *   - activeSessions
      */
 }, {
     toJSON: {
@@ -117,6 +118,13 @@ CampaignSchema.virtual('roles', {
     ref: 'CampaignRole',
     localField: '_id',
     foreignField: 'campaign'
+})
+
+CampaignSchema.virtual('activeSessions', {
+    ref: 'Session',
+    localField: '_id',
+    foreignField: 'campaign',
+    match: { active: true }
 })
 
 
