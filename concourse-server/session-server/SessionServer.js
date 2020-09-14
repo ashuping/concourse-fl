@@ -569,8 +569,11 @@ export class Session {
             }
         }
 
+        const peer = await process_user_for_user(client.user, null)
+        peer.scid = client.scid
+
         this.broadcast(pkt(MSG.PEER_DISCONNECTED, {
-            peer: await process_user_for_user(client, null)
+            peer: peer
         }))
     }
 
